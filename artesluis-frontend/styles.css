@@ -1,0 +1,187 @@
+/* RESET GENERAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* VIDEO DE FONDO */
+#inicio {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.video-container {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* Oscurecemos el video para legibilidad */
+.video-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.55)
+  );
+  pointer-events: none;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.9);
+}
+
+/* CONTENIDO ENCIMA DEL VIDEO */
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;                 /* blanco para contraste */
+  max-width: 900px;
+  width: 88%;
+  opacity: 0;
+  animation: fadeIn 0.9s ease forwards;
+}
+
+.content h1 {
+  font-weight: 700;
+  line-height: 1.15;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+  margin-bottom: 16px;
+  /* tamaño fluido */
+  font-size: clamp(2.1rem, 5vw, 3.5rem);
+}
+
+.content p {
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: #f1f1f1;
+  margin: 12px auto 28px;
+  max-width: 720px;
+}
+
+/* BOTÓN CONOCE MÁS (estética moderna, compatible con Bootstrap) */
+.btn-conoce-mas {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: 0;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(90deg, #ff7a1a, #ffaf2e);
+  box-shadow: 0 10px 22px rgba(255, 150, 30, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.btn-conoce-mas:hover,
+.btn-conoce-mas:focus {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 28px rgba(255, 150, 30, 0.45);
+  filter: brightness(1.03);
+}
+
+/* PIE DE PÁGINA */
+.footer-nosotros {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  text-align: center;
+  color: #d1d5db; /* gris claro */
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+.footer-nosotros .footer-center {
+  pointer-events: auto;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* RESPONSIVE FINO */
+@media (max-width: 576px) {
+  .content {
+    width: 92%;
+  }
+}
+
+
+
+
+/* =========================
+   GALERÍA DE IMÁGENES
+========================= */
+.gallery-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin: 40px auto;
+  max-width: 1200px;
+}
+
+.gallery-image {
+  width: 250px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gallery-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Ventana emergente */
+.image-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.viewer-content img {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.close {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+}

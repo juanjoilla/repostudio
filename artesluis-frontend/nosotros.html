@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Artes Luis Studio - Nosotros</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="nosotros.css" />
+</head>
+
+<body class="nosotros-page">
+  <!-- Botón menú hamburguesa (solo móvil) -->
+  <button class="navbar-toggle" aria-label="Abrir menú" onclick="toggleMenu()">☰</button>
+
+  <!-- Menú lateral -->
+  <nav class="sidebar">
+    <a href="index.html">Inicio</a>
+    <a href="nosotros.html" class="active">Nosotros</a>
+    <a href="mision.html">Misión - Visión</a>
+    <a href="portafolio.html">Portafolio</a>
+    <a href="planes.html">Planes</a>
+    <a href="contacto.html">Contacto</a>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="nosotros-content container-fluid">
+    <!-- About -->
+    <section class="about-section text-center">
+      <h1>¿Quiénes Somos?</h1>
+      <p>Brindamos soluciones visuales únicas y personalizadas que destacan en el entorno digital competitivo, ofreciendo a nuestros clientes un compromiso de calidad y el poder de resonar con su audiencia.</p>
+      <p>Somos reconocidos como un estudio creativo de referencia por nuestras innovaciones constantes y un enfoque estratégico que busca diferenciarnos en el mercado.</p>
+    </section>
+
+    <!-- Equipo -->
+    <section class="team-section text-center">
+      <h2>Conoce a Nuestro Equipo</h2>
+      <div class="team-container row g-4 justify-content-center">
+        <article class="team-member col-12 col-md-6 col-lg-4 accent-blue">
+          <div class="profile-card">
+            <div class="avatar">
+              <img src="img/cliente1.jpg" alt="Luis Ñiquen" loading="lazy">
+            </div>
+            <h4 class="name">Luis Ñiquen</h4>
+            <p class="role">Diseñador Gráfico</p>
+            <p class="bio">10 años creando identidades visuales únicas.</p>
+          </div>
+        </article>
+
+        <article class="team-member col-12 col-md-6 col-lg-4 accent-purple">
+          <div class="profile-card">
+            <div class="avatar">
+              <img src="img/cliente2.jpg" alt="Rosa Llontop" loading="lazy">
+            </div>
+            <h4 class="name">Rosa Llontop</h4>
+            <p class="role">Diseñadora Gráfica</p>
+            <p class="bio">Experta en interfaces funcionales e interactivas.</p>
+          </div>
+        </article>
+
+        <article class="team-member col-12 col-md-6 col-lg-4 accent-rose">
+          <div class="profile-card">
+            <div class="avatar">
+              <img src="img/cliente3.jpg" alt="Marjorie" loading="lazy">
+            </div>
+            <h4 class="name">Marjorie</h4>
+            <p class="role">Marketing Digital</p>
+            <p class="bio">Estrategias efectivas de alcance y conversión.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="testimonials-section text-center">
+      <h2>Lo que dicen nuestros clientes</h2>
+      <div class="testimonials-container row g-4 justify-content-center">
+        <article class="testimonial col-12 col-md-6 col-lg-4">
+          <div class="testimonial-card">
+            <img src="img/testimonial1.jpg" alt="Cinthya Pérez" class="testimonial-img">
+            <p class="testimonial-text">“Gracias a Artes Luis Studio, nuestro logotipo refleja perfectamente la esencia de nuestra marca. ¡Trabajo increíble!”</p>
+            <h4 class="client-name">Cinthya Pérez</h4>
+            <p class="client-role">CEO de Empresa</p>
+          </div>
+        </article>
+
+        <article class="testimonial col-12 col-md-6 col-lg-4">
+          <div class="testimonial-card">
+            <img src="img/testimonial2.jpg" alt="Raúl Reque" class="testimonial-img">
+            <p class="testimonial-text">“La creatividad y el enfoque que aportaron a nuestra campaña digital fueron claves para el éxito. ¡Totalmente recomendados!”</p>
+            <h4 class="client-name">Raúl Reque</h4>
+            <p class="client-role">Gerente de Marketing</p>
+          </div>
+        </article>
+
+        <article class="testimonial col-12 col-md-6 col-lg-4">
+          <div class="testimonial-card">
+            <img src="img/testimonial3.jpg" alt="Deyvi Cumpa" class="testimonial-img">
+            <p class="testimonial-text">“Trabajar con Artes Luis Studio fue una experiencia maravillosa. Profesionalismo y atención al detalle en cada fase del proyecto.”</p>
+            <h4 class="client-name">Deyvi Cumpa</h4>
+            <p class="client-role">Gerente de Ventas</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner container">
+      <div class="brand">© 2025 Artes Luis Studio. Todos los derechos reservados.</div>
+      <div class="footer-actions">
+        <a class="social whatsapp" href="https://wa.me/51940545860" target="_blank" aria-label="WhatsApp">
+          <img src="img/logo-whatsapp.png" alt="">
+        </a>
+        <a class="social facebook" href="https://www.facebook.com/profile.php?id=61578174790494" target="_blank" aria-label="Facebook">
+          <img src="img/logo-facebook.png" alt="">
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS propio -->
+  <script src="nosotros.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

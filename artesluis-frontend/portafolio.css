@@ -1,0 +1,270 @@
+/* RESET GENERAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ------------------------
+   MENÚ LATERAL (SIDEBAR)
+------------------------- */
+nav.sidebar {
+  width: 260px;
+  background-color: #0f172a;
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px;
+  padding-left: 32px;
+  gap: 24px;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+nav.sidebar a {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 17px;
+  text-decoration: none;
+  padding: 14px 16px;
+  border-radius: 0 14px 14px 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+nav.sidebar a:hover,
+nav.sidebar a.active {
+  background-color: #2563eb;
+  color: #f1f5f9;
+}
+
+/* ------------------------
+   PORTAFOLIO PAGE
+------------------------- */
+body.portafolio-page {
+  background: url('img/fondo-pinceladas.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Poppins', sans-serif;
+  margin-left: 260px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main.portafolio-content {
+  padding: 40px;
+  text-align: center;
+  flex: 1;
+}
+
+.portafolio-content h1 {
+  font-size: 2.8rem;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.portafolio-content p {
+  font-size: 1.1rem;
+  color: #1e293b;
+  margin-bottom: 40px;
+}
+
+/* BOTÓN INTERACTIVO CENTRADO */
+.btn-disenos {
+  display: inline-block;
+  padding: 8px 20px;
+  background-color: #f97316;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: fit-content;
+  margin: 40px auto 0;
+}
+
+.btn-disenos:hover {
+  background-color: #ea580c;
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* GALLERY */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.gallery-item {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-item img {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-item span {
+  display: block;
+  padding: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* ------------------------
+   FOOTER - NOSOTROS
+------------------------- */
+.footer-nosotros {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 20px 40px;
+  border-top: 1px solid #e2e8f0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+.footer-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.footer-left, .footer-center, .footer-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-left {
+  justify-content: flex-start;
+}
+
+.footer-right {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.footer-logos img {
+  height: 20px;
+}
+
+.footer-brand img {
+  height: 40px;
+  object-fit: contain;
+  margin-top: 10px;
+}
+
+/* ------------------------
+   RESPONSIVE
+------------------------- */
+@media screen and (max-width: 768px) {
+  nav.sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 20px;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  body.portafolio-page {
+    margin-left: 0;
+  }
+
+  .footer-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-nosotros {
+    padding: 30px 20px;
+  }
+
+  .gallery {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .gallery-item {
+    width: 90%;
+    max-width: 350px;
+  }
+
+  /* Menú hamburguesa */
+  .navbar-toggle {
+    display: block;
+    background-color: #2563eb;
+    color: white;
+    font-size: 24px;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+
+  nav.sidebar.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav.sidebar a {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .gallery-item img {
+    height: 150px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .gallery-item img {
+    height: 120px;
+  }
+
+  .footer-nosotros {
+    padding: 20px 15px;
+  }
+
+  nav.sidebar {
+    display: none;
+  }
+
+  .footer-logos {
+    flex-direction: column;
+    align-items: center;
+  }
+}

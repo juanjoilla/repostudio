@@ -1,0 +1,273 @@
+/* RESET GENERAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ------------------------
+   MENÚ LATERAL (SIDEBAR)
+------------------------- */
+nav.sidebar {
+  width: 260px;
+  background-color: #0f172a;
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px;
+  padding-left: 32px;
+  gap: 24px;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+nav.sidebar a {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 17px;
+  text-decoration: none;
+  padding: 14px 16px;
+  border-radius: 0 14px 14px 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+nav.sidebar a:hover,
+nav.sidebar a.active {
+  background-color: #2563eb;
+  color: #f1f5f9;
+}
+
+/* ------------------------
+   PLANES PAGE
+------------------------- */
+body.planes-page {
+  background: url('img/fondo-pinceladas.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Poppins', sans-serif;
+  margin-left: 260px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main.planes-content {
+  padding: 40px;
+  text-align: center;
+  flex: 1;
+}
+
+.planes-content h1 {
+  font-size: 2.8rem;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.planes-content p {
+  font-size: 1.1rem;
+  color: #1e293b;
+  margin-bottom: 40px;
+}
+
+.plans-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.plan-card {
+  background: white;
+  border-radius: 14px;
+  padding: 30px;
+  width: 300px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.plan-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #2563eb;
+}
+
+.plan-price {
+  font-size: 2rem;
+  color: #f97316;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+  color: #334155;
+}
+
+.plan-features li {
+  margin-bottom: 8px;
+}
+
+.plan-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.plan-btn:hover {
+  background-color: #1e40af;
+}
+
+/* ------------------------
+   FOOTER - NOSOTROS
+------------------------- */
+.footer-nosotros {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 20px 40px;
+  border-top: 1px solid #e2e8f0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+.footer-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.footer-left, .footer-center, .footer-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-left {
+  justify-content: flex-start;
+}
+
+.footer-right {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.footer-logos img {
+  height: 20px;
+}
+
+.footer-brand img {
+  height: 40px;
+  object-fit: contain;
+  margin-top: 10px;
+}
+
+/* ------------------------
+   RESPONSIVE
+------------------------- */
+@media screen and (max-width: 768px) {
+  nav.sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 20px;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  body.planes-page {
+    margin-left: 0;
+  }
+
+  .footer-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-nosotros {
+    padding: 30px 20px;
+  }
+
+  .plans-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .plan-card {
+    width: 90%;
+    max-width: 350px;
+    margin-bottom: 20px;
+  }
+
+  .navbar-toggle {
+    display: block;
+    background-color: #2563eb;
+    color: white;
+    font-size: 24px;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+
+  nav.sidebar.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav.sidebar a {
+    padding: 10px;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .plan-card {
+    width: 90%;
+  }
+
+  .footer-nosotros {
+    padding: 20px 15px;
+  }
+
+  nav.sidebar {
+    display: none;
+  }
+
+  .footer-logos {
+    flex-direction: column;
+    align-items: center;
+  }
+}

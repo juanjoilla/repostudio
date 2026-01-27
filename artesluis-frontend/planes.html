@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artes Luis Studio - Planes</title>
+
+  <!-- Enlace a Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="planes.css" />
+</head>
+
+<body class="planes-page">
+  <!-- Menú hamburguesa -->
+  <div class="navbar-toggle" onclick="toggleMenu()">☰</div>
+  
+  <!-- Menú lateral -->
+  <nav class="sidebar">
+    <a href="index.html">Inicio</a>
+    <a href="nosotros.html">Nosotros</a>
+    <a href="mision.html">Misión - Visión</a>
+    <a href="portafolio.html">Portafolio</a>
+    <a href="planes.html" class="active">Planes</a>
+    <a href="contacto.html">Contacto</a>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="planes-content">
+    <h1>Nuestros Planes</h1>
+    <p>Elige el plan que mejor se adapte a tus necesidades.</p>
+
+    <div class="plans-container">
+      <div class="plan-card">
+        <div class="plan-title">Básico</div>
+        <div class="plan-price">S/ 150</div>
+        <ul class="plan-features">
+          <li>1 Logotipo personalizado</li>
+          <li>Entrega en 3 días</li>
+          <li>1 Revisión gratuita</li>
+        </ul>
+        <a href="contacto.html" class="plan-btn">Elegir Plan</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-title">Estándar</div>
+        <div class="plan-price">S/ 300</div>
+        <ul class="plan-features">
+          <li>3 Diseños de logotipo</li>
+          <li>Entrega en 5 días</li>
+          <li>3 Revisiones gratuitas</li>
+        </ul>
+        <a href="contacto.html" class="plan-btn">Elegir Plan</a>
+      </div>
+      <div class="plan-card">
+        <div class="plan-title">Premium</div>
+        <div class="plan-price">S/ 500</div>
+        <ul class="plan-features">
+          <li>Diseño de identidad completa</li>
+          <li>Entrega en 7 días</li>
+          <li>Revisiones ilimitadas</li>
+        </ul>
+        <a href="contacto.html" class="plan-btn">Elegir Plan</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-nosotros">
+    <div class="footer-main">
+      <p>&copy; 2025 Artes Luis Studio. Todos los derechos reservados.</p>
+      <div class="footer-logos">
+        <a href="https://wa.me/51940545860" target="_blank" class="whatsapp-link">
+          <img src="img/logo-whatsapp.png" alt="WhatsApp" />
+          <span>Chatea con nosotros</span>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=61578174790494" target="_blank">
+          <img src="img/logo-facebook.png" alt="Facebook" />
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Función para abrir y cerrar el menú lateral en móviles
+    function toggleMenu() {
+      document.querySelector('nav.sidebar').classList.toggle('active');
+    }
+  </script>
+
+  <!-- Enlace a Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

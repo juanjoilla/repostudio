@@ -1,0 +1,251 @@
+/* RESET GENERAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ------------------------
+   MENÚ LATERAL (SIDEBAR)
+------------------------- */
+nav.sidebar {
+  width: 260px;
+  background-color: #0f172a;
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px;
+  padding-left: 32px;
+  gap: 24px;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+nav.sidebar a {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 17px;
+  text-decoration: none;
+  padding: 14px 16px;
+  border-radius: 0 14px 14px 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+nav.sidebar a:hover,
+nav.sidebar a.active {
+  background-color: #2563eb;
+  color: #f1f5f9;
+}
+
+/* ------------------------
+   CONTACTO PAGE
+------------------------- */
+body.contacto-page {
+  background: url('img/fondo-pinceladas.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Poppins', sans-serif;
+  margin-left: 260px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main.contacto-content {
+  padding: 40px;
+  flex: 1;
+  color: #1e293b;
+  text-align: center;
+}
+
+.contacto-content h1 {
+  font-size: 2.5rem;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.contacto-content p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.formulario-contacto {
+  background: rgba(255, 255, 255, 0.95);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formulario-contacto label {
+  text-align: left;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.formulario-contacto input,
+.formulario-contacto textarea {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  outline: none;
+}
+
+.formulario-contacto button {
+  background-color: #2563eb;
+  color: #fff;
+  padding: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.formulario-contacto button:hover {
+  background-color: #1e40af;
+}
+
+.contacto-redes {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+}
+
+.contacto-redes a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: #1e293b;
+  font-weight: 500;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.contacto-redes a:hover {
+  transform: scale(1.05);
+  background: #e0f2fe;
+}
+
+.contacto-redes img {
+  height: 22px;
+  width: 22px;
+}
+
+.formulario-contacto select {
+  padding: 8px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+/* ------------------------
+   RESPONSIVE
+------------------------- */
+@media screen and (max-width: 768px) {
+  nav.sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 20px;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  body.contacto-page {
+    margin-left: 0;
+  }
+
+  .footer-center {
+    text-align: center;
+  }
+
+  .formulario-contacto {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .contacto-redes {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contacto-redes a {
+    margin-bottom: 20px;
+  }
+
+  /* Menú hamburguesa */
+  .navbar-toggle {
+    display: block;
+    background-color: #2563eb;
+    color: white;
+    font-size: 24px;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+
+  nav.sidebar.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav.sidebar a {
+    padding: 10px;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .formulario-contacto {
+    width: 100%;
+  }
+
+  .contacto-redes {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav.sidebar {
+    display: none;
+  }
+}
+
+
+
+.success-message {
+  background-color: #4CAF50;  /* Verde */
+  color: white;
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.success-message p {
+  margin: 0;
+}

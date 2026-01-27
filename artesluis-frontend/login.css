@@ -1,0 +1,147 @@
+
+/* =========================
+   LOGIN MODERNO
+========================= */
+.login-body {
+  font-family: 'Poppins', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1d1f20, #3d3f41);
+  position: relative;
+  color: #fff;
+}
+
+/* Fondo animado */
+.login-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: move 15s linear infinite;
+}
+
+.circle:nth-child(1) {
+  width: 150px;
+  height: 150px;
+  top: 10%;
+  left: 15%;
+  animation-duration: 18s;
+}
+
+.circle:nth-child(2) {
+  width: 200px;
+  height: 200px;
+  bottom: 20%;
+  right: 10%;
+  animation-duration: 25s;
+}
+
+.circle:nth-child(3) {
+  width: 100px;
+  height: 100px;
+  bottom: 10%;
+  left: 40%;
+  animation-duration: 20s;
+}
+
+@keyframes move {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-30px) rotate(180deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+
+/* Caja del login */
+.login-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 15px;
+  padding: 40px 30px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+}
+
+.login-box h2 {
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.login-box p {
+  font-size: 0.9rem;
+  margin-bottom: 25px;
+  color: #ddd;
+}
+
+/* Campos del formulario */
+.input-group {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+}
+
+.input-group label {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  color: #ccc;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.input-group input:focus ~ label,
+.input-group input:valid ~ label {
+  top: -15px;
+  font-size: 0.8rem;
+  color: #fff;
+}
+
+/* Botón login */
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #ff6a00, #ee0979);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.btn-login:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
+}
+
+/* Mensaje de error */
+#loginMessage {
+  margin-top: 15px;
+  color: #ff7070;
+  font-weight: 600;
+}

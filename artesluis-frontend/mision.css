@@ -1,0 +1,103 @@
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Poppins',sans-serif}
+
+/* SIDEBAR */
+.sidebar{
+  width:250px;background:#0f172a;position:fixed;inset:0 auto 0 0;height:100%;
+  padding:60px 22px;display:flex;flex-direction:column;gap:18px;z-index:100;
+  transition:transform .3s ease-in-out
+}
+.sidebar a{
+  color:#94a3b8;text-decoration:none;font-weight:600;padding:12px 16px;border-radius:12px;
+  transition:all .25s ease;position:relative;overflow:hidden
+}
+.sidebar a:hover,.sidebar a.active{background:#0b1222;color:#fff}
+.sidebar a:hover::after,.sidebar a.active::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(37,99,235,.18),rgba(124,58,237,.18))
+}
+.navbar-toggle{
+  display:none;background:#2563eb;color:#fff;border:0;font-size:26px;padding:10px 14px;
+  position:fixed;top:15px;left:15px;border-radius:8px;z-index:110;cursor:pointer
+}
+
+/* CONTENIDO */
+.mision-page{
+  background:url('img/fondo-pinceladas.jpg') center/cover fixed no-repeat;
+  margin-left:250px;min-height:100vh;transition:margin-left .3s ease
+}
+.mision-content{padding:60px 20px;text-align:center;color:#1e293b}
+.page-title{color:#2563eb;font-size:2.5rem;font-weight:700}
+.page-subtitle{color:#475569;margin-bottom:40px;font-size:1.1rem}
+
+/* TARJETAS DE MISION/VISION */
+.info-card{
+  background:#fff;border:1px solid rgba(15,23,42,.08);
+  border-radius:18px;padding:30px 24px;text-align:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);transition:all .35s ease;
+  height:100%;
+}
+.info-card h2{
+  font-size:1.8rem;color:var(--accent,#2563eb);
+  margin-bottom:18px;font-weight:700;
+}
+.info-card p{
+  font-size:1.05rem;color:#334155;line-height:1.7;transition:color .35s ease;
+}
+
+/* Hover con cambio de color y fondo */
+.info-card:hover{
+  transform:translateY(-6px);
+  background:linear-gradient(180deg,rgba(37,99,235,.07),rgba(124,58,237,.07)),#fff;
+  border-color:var(--accent,#2563eb);
+  box-shadow:0 18px 40px rgba(2,6,23,.14);
+}
+.info-card:hover h2{color:#0f172a;}
+.info-card:hover p{color:#1e293b;font-weight:500}
+
+/* LOGO CENTRAL */
+.logo-card img{
+  width:100%;max-width:260px;border-radius:16px;
+  box-shadow:0 8px 24px rgba(2,6,23,.12);
+  transition:transform .35s ease;
+}
+.logo-card img:hover{transform:scale(1.05)}
+
+/* COLORES DE ACENTO */
+.accent-blue{--accent:#2563eb}
+.accent-purple{--accent:#7c3aed}
+
+/* FOOTER */
+.site-footer{
+  margin-top:56px;background:linear-gradient(180deg,#ffffff,#f1f5f9);
+  border-top:1px solid #e5e7eb
+}
+.site-footer .footer-inner{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:18px 16px;flex-wrap:wrap
+}
+.site-footer .brand{color:#0f172a;font-size:.98rem}
+.footer-actions{display:flex;gap:10px}
+.footer-actions .social{
+  width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid #e5e7eb;border-radius:999px;
+  box-shadow:0 4px 10px rgba(2,6,23,.06);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease
+}
+.footer-actions .social:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 20px rgba(2,6,23,.12);
+  border-color:#cbd5e1
+}
+.footer-actions .social img{width:20px;height:20px;object-fit:contain}
+
+/* RESPONSIVE */
+@media(max-width:992px){
+  .mision-page{margin-left:0}
+  .navbar-toggle{display:block}
+  .sidebar{transform:translateX(-100%);position:fixed}
+  .sidebar.active{transform:translateX(0)}
+  .mision-layout{text-align:center}
+  .site-footer .footer-inner{flex-direction:column;text-align:center}
+}
