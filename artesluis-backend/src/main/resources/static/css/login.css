@@ -8,9 +8,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1d1f20, #3d3f41);
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
   position: relative;
-  color: #fff;
+  color: #333;
 }
 
 /* Fondo animado */
@@ -25,7 +25,7 @@
 .circle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(52, 152, 219, 0.1);
   animation: move 15s linear infinite;
 }
 
@@ -66,25 +66,26 @@
 }
 
 .login-box {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   border-radius: 15px;
   padding: 40px 30px;
   width: 320px;
   text-align: center;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(52, 152, 219, 0.2);
 }
 
 .login-box h2 {
   margin-bottom: 10px;
   font-size: 1.8rem;
-  color: #fff;
+  color: #2c3e50;
 }
 
 .login-box p {
   font-size: 0.9rem;
   margin-bottom: 25px;
-  color: #ddd;
+  color: #6c757d;
 }
 
 /* Campos del formulario */
@@ -97,9 +98,9 @@
   width: 100%;
   padding: 10px;
   border: none;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #dee2e6;
   background: transparent;
-  color: #fff;
+  color: #495057;
   font-size: 1rem;
   outline: none;
 }
@@ -108,7 +109,7 @@
   position: absolute;
   left: 0;
   top: 10px;
-  color: #ccc;
+  color: #6c757d;
   pointer-events: none;
   transition: 0.3s ease;
 }
@@ -117,7 +118,7 @@
 .input-group input:valid ~ label {
   top: -15px;
   font-size: 0.8rem;
-  color: #fff;
+  color: #3498db;
 }
 
 /* Botón login */
@@ -157,16 +158,16 @@
 .login-links {
   margin-top: 20px;
   padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(52, 152, 219, 0.2);
 }
 
 .link-home {
-  color: #ddd;
+  color: #6c757d;
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.3s ease;
 }
 
 .link-home:hover {
-  color: #fff;
+  color: #3498db;
 }
