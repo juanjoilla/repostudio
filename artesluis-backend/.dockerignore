@@ -1,0 +1,34 @@
+# Ignore git files
+.git
+.gitignore
+
+# Ignore IDE files
+.vscode
+.idea
+*.iml
+
+# Ignore build artifacts that will be created during Docker build
+target/
+!target/*.jar
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore documentation
+README*.md
+docs/
+
+# Ignore test files
+src/test/
+**/test/
+
+# Ignore uploads folder (will be created at runtime)
+uploads/
+
+# Ignore render files (not needed in container)
+render*.sh
+render.yaml

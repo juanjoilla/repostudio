@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: artesluis-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/test
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: artesluis-db
+          property: connectionString
+      - key: CORS_ORIGINS
+        value: "https://*.onrender.com,https://*.netlify.app,https://*.vercel.app"
+        
+databases:
+  - name: artesluis-db
+    databaseName: artesluis_db
+    user: artesluis_user
+    plan: free

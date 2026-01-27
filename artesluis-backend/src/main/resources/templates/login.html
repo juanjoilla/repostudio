@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso Administrador | Artes Luis Studio</title>
+  <link rel="stylesheet" th:href="@{/css/login.css}" />
+</head>
+<body class="login-body">
+
+  <!-- Fondo animado -->
+  <div class="login-background">
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+  </div>
+
+  <!-- Contenedor del formulario -->
+  <div class="login-wrapper">
+    <div class="login-box">
+      <h2>Panel de Administración</h2>
+      <p>Inicia sesión para gestionar tu contenido</p>
+      <form id="loginForm">
+        <div class="input-group">
+          <input type="email" id="correo" name="correo" required>
+          <label for="correo">Correo Electrónico</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="password" name="password" required>
+          <label for="password">Contraseña</label>
+        </div>
+        <button type="submit" class="btn-login">Ingresar</button>
+      </form>
+      <p id="loginMessage"></p>
+      
+      <!-- Enlaces adicionales -->
+      <div class="login-links">
+        <a th:href="@{/}" class="link-home">← Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script th:src="@{/js/artesluis.js}"></script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Administración - Artes Luis Studio</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <link rel="stylesheet" th:href="@{/css/login.css}" />
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-box">
+      <h1 class="text-center mb-4">Panel de Administración</h1>
+      
+      <!-- Sección de autenticación -->
+      <div id="authSection">
+        <form id="adminLoginForm">
+          <div class="mb-3">
+            <label for="adminEmail" class="form-label">Email de Administrador</label>
+            <input type="email" class="form-control" id="adminEmail" required>
+          </div>
+          <div class="mb-3">
+            <label for="adminPassword" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="adminPassword" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Acceder</button>
+        </form>
+      </div>
+
+      <!-- Panel de administración -->
+      <div id="adminPanel" style="display: none;">
+        <div class="row">
+          <div class="col-12 mb-4">
+            <h3>Gestión de Usuarios</h3>
+            <button id="loadUsersBtn" class="btn btn-info">Cargar Usuarios</button>
+            <button id="logoutBtn" class="btn btn-secondary float-end">Cerrar Sesión</button>
+          </div>
+        </div>
+        
+        <!-- Lista de usuarios -->
+        <div class="row">
+          <div class="col-12">
+            <div id="usersTable" class="table-responsive">
+              <!-- Tabla de usuarios se cargará aquí -->
+            </div>
+          </div>
+        </div>
+        
+        <!-- Búsqueda de usuarios -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <h4>Buscar Usuario</h4>
+            <form id="searchUserForm" class="row g-3">
+              <div class="col-md-6">
+                <input type="email" class="form-control" id="searchEmail" placeholder="Email del usuario">
+              </div>
+              <div class="col-md-6">
+                <input type="password" class="form-control" id="searchAdminPassword" placeholder="Contraseña de admin">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+              </div>
+            </form>
+            <div id="searchResult" class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Función para autenticación de admin
+    document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+      
+      try {
+        const response = await fetch('/api/admin/usuarios', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ adminEmail: email, adminPassword: password })
+        });
+        
+        if (response.ok) {
+          document.getElementById('authSection').style.display = 'none';
+          document.getElementById('adminPanel').style.display = 'block';
+          // Guardar credenciales para uso posterior
+          sessionStorage.setItem('adminEmail', email);
+          sessionStorage.setItem('adminPassword', password);
+        } else {
+          alert('Credenciales incorrectas');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+      }
+    });
+    
+    // Cargar usuarios
+    document.getElementById('loadUsersBtn').addEventListener('click', async function() {
+      const adminEmail = sessionStorage.getItem('adminEmail');
+      const adminPassword = sessionStorage.getItem('adminPassword');
+      
+      try {
+        const response = await fetch('/api/admin/usuarios', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ adminEmail, adminPassword })
+        });
+        
+        if (response.ok) {
+          const users = await response.json();
+          displayUsers(users);
+        } else {
+          alert('Error al cargar usuarios');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+      }
+    });
+    
+    // Mostrar usuarios en tabla
+    function displayUsers(users) {
+      const tableHtml = `
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${users.map(user => `
+              <tr>
+                <td>${user.id}</td>
+                <td>${user.nombre}</td>
+                <td>${user.email}</td>
+                <td>${user.rol ? user.rol.nombre : 'Sin rol'}</td>
+                <td>
+                  <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Eliminar</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      document.getElementById('usersTable').innerHTML = tableHtml;
+    }
+    
+    // Eliminar usuario
+    async function deleteUser(userId) {
+      if (!confirm('¿Estás seguro de que quieres eliminar este usuario?')) return;
+      
+      const adminEmail = sessionStorage.getItem('adminEmail');
+      const adminPassword = sessionStorage.getItem('adminPassword');
+      
+      try {
+        const response = await fetch(`/api/admin/usuarios/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ adminEmail, adminPassword })
+        });
+        
+        if (response.ok) {
+          alert('Usuario eliminado exitosamente');
+          document.getElementById('loadUsersBtn').click(); // Recargar lista
+        } else {
+          alert('Error al eliminar usuario');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+      }
+    }
+    
+    // Buscar usuario
+    document.getElementById('searchUserForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('searchEmail').value;
+      const adminPassword = document.getElementById('searchAdminPassword').value;
+      const adminEmail = sessionStorage.getItem('adminEmail');
+      
+      try {
+        const response = await fetch('/api/admin/buscar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, adminEmail, adminPassword })
+        });
+        
+        if (response.ok) {
+          const user = await response.json();
+          document.getElementById('searchResult').innerHTML = `
+            <div class="card">
+              <div class="card-body">
+                <h5>Usuario encontrado:</h5>
+                <p><strong>ID:</strong> ${user.id}</p>
+                <p><strong>Nombre:</strong> ${user.nombre}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Rol:</strong> ${user.rol ? user.rol.nombre : 'Sin rol'}</p>
+              </div>
+            </div>
+          `;
+        } else {
+          document.getElementById('searchResult').innerHTML = '<div class="alert alert-warning">Usuario no encontrado</div>';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+      }
+    });
+    
+    // Cerrar sesión
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      sessionStorage.removeItem('adminEmail');
+      sessionStorage.removeItem('adminPassword');
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('authSection').style.display = 'block';
+      document.getElementById('adminLoginForm').reset();
+    });
+  </script>
+</body>
+</html>
