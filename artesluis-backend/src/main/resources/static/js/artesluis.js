@@ -10,7 +10,116 @@ document.addEventListener('DOMContentLoaded', () => {
       link.classList.remove('active');
     }
   });
+
+  // Inicializar detector de imágenes rotas
+  initImageErrorHandler();
 });
+
+// ===== MANEJO DE IMÁGENES ROTAS =====
+function initImageErrorHandler() {
+  // Detectar todas las imágenes en la página
+  const images = document.querySelectorAll('img');
+  const videos = document.querySelectorAll('video source');
+  
+  console.log(`🖼️ Verificando ${images.length} imágenes y ${videos.length} videos...`);
+  
+  // Manejador para imágenes
+  images.forEach((img, index) => {
+    img.addEventListener('error', function() {
+      console.error(`❌ Error cargando imagen: ${this.src}`);
+      
+      // Reemplazar con imagen placeholder
+      if (!this.classList.contains('placeholder-applied')) {
+        this.classList.add('placeholder-applied');
+        this.src = '/img/logo-artesluis.png';
+        this.alt = 'Imagen no disponible';
+        this.style.opacity = '0.7';
+        
+        // Si la imagen placeholder también falla, mostrar div con texto
+        this.addEventListener('error', function() {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'image-placeholder';
+          placeholder.innerHTML = `
+            <div style="
+              background: #f8f9fa;
+              border: 2px dashed #dee2e6;
+              border-radius: 8px;
+              padding: 20px;
+              text-align: center;
+              color: #6c757d;
+              min-height: 200px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-direction: column;
+            ">
+              <i class="bi bi-image" style="font-size: 3rem; margin-bottom: 10px;"></i>
+              <p style="margin: 0;">Imagen no disponible</p>
+              <small style="opacity: 0.7;">${this.getAttribute('alt') || 'Sin descripción'}</small>
+            </div>
+          `;
+          this.parentNode.replaceChild(placeholder, this);
+        }, { once: true });
+      }
+    });
+    
+    // Verificar si la imagen se carga correctamente
+    img.addEventListener('load', function() {
+      console.log(`✅ Imagen cargada correctamente: ${this.src}`);
+    });
+  });
+  
+  // Manejador para videos
+  videos.forEach((source) => {
+    const video = source.parentElement;
+    
+    video.addEventListener('error', function() {
+      console.error(`❌ Error cargando video: ${source.src}`);
+      
+      // Reemplazar video con placeholder
+      const placeholder = document.createElement('div');
+      placeholder.className = 'video-placeholder';
+      placeholder.innerHTML = `
+        <div style="
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border-radius: 15px;
+          padding: 40px;
+          text-align: center;
+          min-height: 400px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+        ">
+          <i class="bi bi-play-circle" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.8;"></i>
+          <h3 style="margin-bottom: 10px;">Video no disponible</h3>
+          <p style="margin: 0; opacity: 0.9;">El contenido de video se cargará próximamente</p>
+        </div>
+      `;
+      
+      video.parentNode.replaceChild(placeholder, video);
+    });
+  });
+}
+
+// Función para verificar estado de recursos
+function checkResourceStatus() {
+  fetch('/api/diagnostics/resources')
+    .then(response => response.json())
+    .then(data => {
+      console.log('📊 Estado de recursos:', data);
+      
+      if (data.healthCheck === 'ISSUES_FOUND') {
+        console.warn(`⚠️ Se encontraron ${data.missingResources} recursos faltantes de ${data.totalResources} verificados`);
+      } else {
+        console.log('✅ Todos los recursos están disponibles');
+      }
+    })
+    .catch(error => {
+      console.error('Error verificando recursos:', error);
+    });
+}
 
 // ===== GESTIÓN DE GALERÍA DE IMÁGENES =====
 document.addEventListener("DOMContentLoaded", () => {

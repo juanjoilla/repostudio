@@ -7,6 +7,9 @@
 
   <!-- Bootstrap 5.3 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,63 +17,186 @@
   <!-- Estilos personalizados -->
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
   <link rel="stylesheet" th:href="@{/css/login.css}" />
+  
+  <style>
+    .admin-body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .admin-container {
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+    
+    .admin-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .admin-header {
+      background: linear-gradient(45deg, #343a40, #495057);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .stats-card {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .action-buttons {
+      gap: 0.5rem;
+    }
+  </style>
 </head>
-<body class="login-body">
-  <div class="login-container">
-    <div class="login-box">
-      <h1 class="text-center mb-4">Panel de Administración</h1>
-      
-      <!-- Sección de autenticación -->
-      <div id="authSection">
-        <form id="adminLoginForm">
-          <div class="mb-3">
-            <label for="adminEmail" class="form-label">Email de Administrador</label>
-            <input type="email" class="form-control" id="adminEmail" required>
-          </div>
-          <div class="mb-3">
-            <label for="adminPassword" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="adminPassword" required>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Acceder</button>
-        </form>
-      </div>
-
-      <!-- Panel de administración -->
-      <div id="adminPanel" style="display: none;">
-        <div class="row">
-          <div class="col-12 mb-4">
-            <h3>Gestión de Usuarios</h3>
-            <button id="loadUsersBtn" class="btn btn-info">Cargar Usuarios</button>
-            <button id="logoutBtn" class="btn btn-secondary float-end">Cerrar Sesión</button>
-          </div>
+<body class="admin-body">
+  <div class="admin-container">
+    <div class="container">
+      <div class="admin-card">
+        
+        <!-- Header -->
+        <div class="admin-header">
+          <h1 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Panel de Administración</h1>
+          <p class="mb-0 mt-2">Artes Luis Studio</p>
         </div>
         
-        <!-- Lista de usuarios -->
-        <div class="row">
-          <div class="col-12">
-            <div id="usersTable" class="table-responsive">
-              <!-- Tabla de usuarios se cargará aquí -->
+        <!-- Sección de autenticación -->
+        <div id="authSection" class="p-4">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                  <h4 class="card-title text-center mb-4">
+                    <i class="bi bi-person-check text-primary fs-1"></i><br>
+                    Iniciar Sesión
+                  </h4>
+                  <form id="adminLoginForm">
+                    <div class="mb-3">
+                      <label for="adminEmail" class="form-label">
+                        <i class="bi bi-envelope me-1"></i>Email de Administrador
+                      </label>
+                      <input type="email" class="form-control" id="adminEmail" required>
+                    </div>
+                    <div class="mb-4">
+                      <label for="adminPassword" class="form-label">
+                        <i class="bi bi-lock me-1"></i>Contraseña
+                      </label>
+                      <input type="password" class="form-control" id="adminPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                      <i class="bi bi-box-arrow-in-right me-2"></i>Acceder
+                    </button>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        
-        <!-- Búsqueda de usuarios -->
-        <div class="row mt-4">
-          <div class="col-12">
-            <h4>Buscar Usuario</h4>
-            <form id="searchUserForm" class="row g-3">
-              <div class="col-md-6">
-                <input type="email" class="form-control" id="searchEmail" placeholder="Email del usuario">
-              </div>
-              <div class="col-md-6">
-                <input type="password" class="form-control" id="searchAdminPassword" placeholder="Contraseña de admin">
-              </div>
-              <div class="col-12">
-                <button type="submit" class="btn btn-primary">Buscar</button>
-              </div>
-            </form>
-            <div id="searchResult" class="mt-3"></div>
+
+        <!-- Panel de administración -->
+        <div id="adminPanel" style="display: none;" class="p-4">
+          
+          <!-- Dashboard Header -->
+          <div class="row mb-4">
+            <div class="col-md-8">
+              <h3><i class="bi bi-speedometer2 me-2"></i>Dashboard</h3>
+              <p class="text-muted mb-0">Gestiona usuarios y supervisa la actividad</p>
+            </div>
+            <div class="col-md-4 text-end">
+              <button id="logoutBtn" class="btn btn-outline-danger">
+                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+              </button>
+            </div>
           </div>
+
+          <!-- Stats Cards -->
+          <div class="row mb-4" id="statsCards">
+            <!-- Se llenarán dinámicamente -->
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title"><i class="bi bi-gear-fill me-2"></i>Acciones Rápidas</h5>
+                  <div class="d-flex flex-wrap action-buttons">
+                    <button id="loadUsersBtn" class="btn btn-success">
+                      <i class="bi bi-people-fill me-2"></i>Cargar Usuarios
+                    </button>
+                    <button id="refreshStatsBtn" class="btn btn-info">
+                      <i class="bi bi-arrow-clockwise me-2"></i>Actualizar Estadísticas
+                    </button>
+                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
+                      <i class="bi bi-search me-2"></i>Buscar Usuario
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Lista de usuarios -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0"><i class="bi bi-table me-2"></i>Gestión de Usuarios</h5>
+                  <span class="badge bg-primary" id="userCount">0 usuarios</span>
+                </div>
+                <div class="card-body p-0">
+                  <div id="usersTable" class="table-responsive">
+                    <div class="text-center p-4 text-muted">
+                      <i class="bi bi-inbox fs-1"></i>
+                      <p class="mt-2">Haz clic en "Cargar Usuarios" para ver la lista</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de búsqueda -->
+  <div class="modal fade" id="searchModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-search me-2"></i>Buscar Usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="searchUserForm">
+            <div class="mb-3">
+              <label for="searchEmail" class="form-label">
+                <i class="bi bi-envelope me-1"></i>Email del usuario
+              </label>
+              <input type="email" class="form-control" id="searchEmail" placeholder="usuario@ejemplo.com" required>
+            </div>
+            <div class="mb-3">
+              <label for="searchAdminPassword" class="form-label">
+                <i class="bi bi-lock me-1"></i>Confirmar contraseña de admin
+              </label>
+              <input type="password" class="form-control" id="searchAdminPassword" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search me-2"></i>Buscar
+              </button>
+            </div>
+          </form>
+          <div id="searchResult" class="mt-3"></div>
         </div>
       </div>
     </div>
@@ -78,13 +204,86 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- SweetAlert2 para alertas modernas -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <script>
+    let currentUsers = [];
+    
+    // Toast notification utility
+    function showToast(message, type = 'success') {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
+      
+      Toast.fire({
+        icon: type,
+        title: message
+      });
+    }
+
+    // Update stats cards
+    function updateStats(users) {
+      const totalUsers = users.length;
+      const admins = users.filter(u => u.rol && u.rol.nombre === 'ADMIN').length;
+      const regularUsers = totalUsers - admins;
+      
+      document.getElementById('statsCards').innerHTML = `
+        <div class="col-md-4">
+          <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="mb-0">${totalUsers}</h3>
+                <p class="mb-0">Total Usuarios</p>
+              </div>
+              <i class="bi bi-people-fill fs-1 opacity-75"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="mb-0">${admins}</h3>
+                <p class="mb-0">Administradores</p>
+              </div>
+              <i class="bi bi-shield-check fs-1 opacity-75"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="mb-0">${regularUsers}</h3>
+                <p class="mb-0">Usuarios Regulares</p>
+              </div>
+              <i class="bi bi-person-circle fs-1 opacity-75"></i>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('userCount').textContent = `${totalUsers} usuario${totalUsers !== 1 ? 's' : ''}`;
+    }
+
     // Función para autenticación de admin
     document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const email = document.getElementById('adminEmail').value;
       const password = document.getElementById('adminPassword').value;
+      
+      // Loading state
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Verificando...';
+      submitBtn.disabled = true;
       
       try {
         const response = await fetch('/api/admin/usuarios', {
@@ -96,17 +295,28 @@
         });
         
         if (response.ok) {
+          const data = await response.json();
+          currentUsers = data;
+          
           document.getElementById('authSection').style.display = 'none';
           document.getElementById('adminPanel').style.display = 'block';
+          
           // Guardar credenciales para uso posterior
           sessionStorage.setItem('adminEmail', email);
           sessionStorage.setItem('adminPassword', password);
+          
+          // Actualizar estadísticas
+          updateStats(currentUsers);
+          showToast('¡Bienvenido al panel de administración!', 'success');
         } else {
-          alert('Credenciales incorrectas');
+          showToast('Credenciales incorrectas', 'error');
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('Error de conexión');
+        showToast('Error de conexión', 'error');
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
       }
     });
     
@@ -114,6 +324,10 @@
     document.getElementById('loadUsersBtn').addEventListener('click', async function() {
       const adminEmail = sessionStorage.getItem('adminEmail');
       const adminPassword = sessionStorage.getItem('adminPassword');
+      
+      // Loading state
+      this.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Cargando...';
+      this.disabled = true;
       
       try {
         const response = await fetch('/api/admin/usuarios', {
@@ -125,51 +339,166 @@
         });
         
         if (response.ok) {
-          const users = await response.json();
-          displayUsers(users);
+          const data = await response.json();
+          currentUsers = data;
+          displayUsers(data);
+          updateStats(data);
+          showToast('Usuarios cargados correctamente', 'success');
         } else {
-          alert('Error al cargar usuarios');
+          showToast('Error al cargar usuarios', 'error');
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('Error de conexión');
+        showToast('Error de conexión', 'error');
+      } finally {
+        this.innerHTML = '<i class="bi bi-people-fill me-2"></i>Cargar Usuarios';
+        this.disabled = false;
       }
     });
     
-    // Mostrar usuarios en tabla
+    // Refresh stats button
+    document.getElementById('refreshStatsBtn').addEventListener('click', function() {
+      updateStats(currentUsers);
+      showToast('Estadísticas actualizadas', 'info');
+    });
+    
+    // Mostrar usuarios en tabla mejorada
     function displayUsers(users) {
+      if (users.length === 0) {
+        document.getElementById('usersTable').innerHTML = `
+          <div class="text-center p-4 text-muted">
+            <i class="bi bi-inbox fs-1"></i>
+            <p class="mt-2">No hay usuarios registrados</p>
+          </div>
+        `;
+        return;
+      }
+      
       const tableHtml = `
-        <table class="table table-striped">
-          <thead>
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
             <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>Acciones</th>
+              <th><i class="bi bi-hash me-1"></i>ID</th>
+              <th><i class="bi bi-person me-1"></i>Nombre</th>
+              <th><i class="bi bi-envelope me-1"></i>Email</th>
+              <th><i class="bi bi-shield me-1"></i>Rol</th>
+              <th><i class="bi bi-gear me-1"></i>Acciones</th>
             </tr>
           </thead>
           <tbody>
             ${users.map(user => `
               <tr>
-                <td>${user.id}</td>
-                <td>${user.nombre}</td>
-                <td>${user.email}</td>
-                <td>${user.rol ? user.rol.nombre : 'Sin rol'}</td>
+                <td><span class="badge bg-secondary">${user.id}</span></td>
                 <td>
-                  <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Eliminar</button>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-circle me-2">
+                      ${user.nombre.charAt(0).toUpperCase()}
+                    </div>
+                    ${user.nombre}
+                  </div>
+                </td>
+                <td>${user.email}</td>
+                <td>
+                  <span class="badge ${user.rol?.nombre === 'ADMIN' ? 'bg-danger' : 'bg-primary'}">
+                    ${user.rol ? user.rol.nombre : 'Sin rol'}
+                  </span>
+                </td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-info" onclick="viewUser(${user.id})" title="Ver detalles">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="deleteUser(${user.id})" title="Eliminar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
             `).join('')}
           </tbody>
         </table>
+        <style>
+          .avatar-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+          }
+        </style>
       `;
       document.getElementById('usersTable').innerHTML = tableHtml;
     }
     
-    // Eliminar usuario
+    // Ver detalles del usuario
+    function viewUser(userId) {
+      const user = currentUsers.find(u => u.id === userId);
+      if (!user) return;
+      
+      Swal.fire({
+        title: 'Detalles del Usuario',
+        html: `
+          <div class="text-start">
+            <div class="mb-3">
+              <strong><i class="bi bi-hash me-2"></i>ID:</strong> ${user.id}
+            </div>
+            <div class="mb-3">
+              <strong><i class="bi bi-person me-2"></i>Nombre:</strong> ${user.nombre}
+            </div>
+            <div class="mb-3">
+              <strong><i class="bi bi-envelope me-2"></i>Email:</strong> ${user.email}
+            </div>
+            <div class="mb-3">
+              <strong><i class="bi bi-shield me-2"></i>Rol:</strong> 
+              <span class="badge ${user.rol?.nombre === 'ADMIN' ? 'bg-danger' : 'bg-primary'}">
+                ${user.rol ? user.rol.nombre : 'Sin rol'}
+              </span>
+            </div>
+          </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Cerrar',
+        customClass: {
+          confirmButton: 'btn btn-primary'
+        }
+      });
+    }
+    
+    // Eliminar usuario con confirmación mejorada
     async function deleteUser(userId) {
-      if (!confirm('¿Estás seguro de que quieres eliminar este usuario?')) return;
+      const user = currentUsers.find(u => u.id === userId);
+      if (!user) return;
+      
+      const result = await Swal.fire({
+        title: '¿Eliminar usuario?',
+        html: `
+          <div class="text-start">
+            <p>Esta acción eliminará permanentemente el usuario:</p>
+            <div class="card bg-light">
+              <div class="card-body">
+                <strong>${user.nombre}</strong><br>
+                <small class="text-muted">${user.email}</small>
+              </div>
+            </div>
+          </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#dc3545',
+        customClass: {
+          confirmButton: 'btn btn-danger',
+          cancelButton: 'btn btn-secondary'
+        }
+      });
+      
+      if (!result.isConfirmed) return;
       
       const adminEmail = sessionStorage.getItem('adminEmail');
       const adminPassword = sessionStorage.getItem('adminPassword');
@@ -184,14 +513,17 @@
         });
         
         if (response.ok) {
-          alert('Usuario eliminado exitosamente');
-          document.getElementById('loadUsersBtn').click(); // Recargar lista
+          // Actualizar lista local
+          currentUsers = currentUsers.filter(u => u.id !== userId);
+          displayUsers(currentUsers);
+          updateStats(currentUsers);
+          showToast('Usuario eliminado exitosamente', 'success');
         } else {
-          alert('Error al eliminar usuario');
+          showToast('Error al eliminar usuario', 'error');
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('Error de conexión');
+        showToast('Error de conexión', 'error');
       }
     }
     
@@ -202,6 +534,11 @@
       const email = document.getElementById('searchEmail').value;
       const adminPassword = document.getElementById('searchAdminPassword').value;
       const adminEmail = sessionStorage.getItem('adminEmail');
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Buscando...';
+      submitBtn.disabled = true;
       
       try {
         const response = await fetch('/api/admin/buscar', {
@@ -215,32 +552,71 @@
         if (response.ok) {
           const user = await response.json();
           document.getElementById('searchResult').innerHTML = `
-            <div class="card">
-              <div class="card-body">
-                <h5>Usuario encontrado:</h5>
-                <p><strong>ID:</strong> ${user.id}</p>
-                <p><strong>Nombre:</strong> ${user.nombre}</p>
-                <p><strong>Email:</strong> ${user.email}</p>
-                <p><strong>Rol:</strong> ${user.rol ? user.rol.nombre : 'Sin rol'}</p>
+            <div class="alert alert-success">
+              <h6><i class="bi bi-check-circle me-2"></i>Usuario encontrado</h6>
+              <div class="card mt-2">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-2">
+                    <div class="avatar-circle me-2">
+                      ${user.nombre.charAt(0).toUpperCase()}
+                    </div>
+                    <strong>${user.nombre}</strong>
+                    <span class="badge ${user.rol?.nombre === 'ADMIN' ? 'bg-danger' : 'bg-primary'} ms-2">
+                      ${user.rol ? user.rol.nombre : 'Sin rol'}
+                    </span>
+                  </div>
+                  <p class="mb-0"><strong>Email:</strong> ${user.email}</p>
+                  <p class="mb-0"><strong>ID:</strong> ${user.id}</p>
+                </div>
               </div>
             </div>
           `;
+          
+          // Limpiar formulario
+          document.getElementById('searchEmail').value = '';
+          document.getElementById('searchAdminPassword').value = '';
+          
         } else {
-          document.getElementById('searchResult').innerHTML = '<div class="alert alert-warning">Usuario no encontrado</div>';
+          document.getElementById('searchResult').innerHTML = `
+            <div class="alert alert-warning">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              Usuario no encontrado
+            </div>
+          `;
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('Error de conexión');
+        showToast('Error de conexión', 'error');
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
       }
     });
     
     // Cerrar sesión
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-      sessionStorage.removeItem('adminEmail');
-      sessionStorage.removeItem('adminPassword');
-      document.getElementById('adminPanel').style.display = 'none';
-      document.getElementById('authSection').style.display = 'block';
-      document.getElementById('adminLoginForm').reset();
+    document.getElementById('logoutBtn').addEventListener('click', async function() {
+      const result = await Swal.fire({
+        title: '¿Cerrar sesión?',
+        text: 'Se cerrará tu sesión de administrador',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-secondary'
+        }
+      });
+      
+      if (result.isConfirmed) {
+        sessionStorage.removeItem('adminEmail');
+        sessionStorage.removeItem('adminPassword');
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('authSection').style.display = 'block';
+        document.getElementById('adminLoginForm').reset();
+        currentUsers = [];
+        showToast('Sesión cerrada correctamente', 'info');
+      }
     });
   </script>
 </body>
