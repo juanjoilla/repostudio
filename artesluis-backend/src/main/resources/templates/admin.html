@@ -230,6 +230,12 @@
 
     // Update stats cards
     function updateStats(users) {
+      // Validar que users sea un array
+      if (!Array.isArray(users)) {
+        console.warn('updateStats: users is not an array:', users);
+        users = []; // Usar array vacío como fallback
+      }
+      
       const totalUsers = users.length;
       const admins = users.filter(u => u.rol && u.rol.nombre === 'ADMIN').length;
       const regularUsers = totalUsers - admins;
@@ -297,7 +303,9 @@
         
         if (response.ok) {
           const data = await response.json();
-          currentUsers = data;
+          console.log('Admin Login API Response:', data); // Log para depuración
+          // Validar que data sea un array
+          currentUsers = Array.isArray(data) ? data : [];
           
           document.getElementById('authSection').style.display = 'none';
           document.getElementById('adminPanel').style.display = 'block';
@@ -341,9 +349,11 @@
         
         if (response.ok) {
           const data = await response.json();
-          currentUsers = data;
-          displayUsers(data);
-          updateStats(data);
+          console.log('Load Users API Response:', data); // Log para depuración
+          // Validar que data sea un array
+          currentUsers = Array.isArray(data) ? data : [];
+          displayUsers(currentUsers);
+          updateStats(currentUsers);
           showToast('Usuarios cargados correctamente', 'success');
         } else {
           showToast('Error al cargar usuarios', 'error');
@@ -365,6 +375,12 @@
     
     // Mostrar usuarios en tabla mejorada
     function displayUsers(users) {
+      // Validar que users sea un array
+      if (!Array.isArray(users)) {
+        console.warn('displayUsers: users is not an array:', users);
+        users = []; // Usar array vacío como fallback
+      }
+      
       if (users.length === 0) {
         document.getElementById('usersTable').innerHTML = `
           <div class="text-center p-4 text-muted">
@@ -438,6 +454,10 @@
     
     // Ver detalles del usuario
     function viewUser(userId) {
+      if (!Array.isArray(currentUsers)) {
+        console.warn('viewUser: currentUsers is not an array');
+        return;
+      }
       const user = currentUsers.find(u => u.id === userId);
       if (!user) return;
       
@@ -472,6 +492,10 @@
     
     // Eliminar usuario con confirmación mejorada
     async function deleteUser(userId) {
+      if (!Array.isArray(currentUsers)) {
+        console.warn('deleteUser: currentUsers is not an array');
+        return;
+      }
       const user = currentUsers.find(u => u.id === userId);
       if (!user) return;
       
@@ -515,7 +539,11 @@
         
         if (response.ok) {
           // Actualizar lista local
-          currentUsers = currentUsers.filter(u => u.id !== userId);
+          if (Array.isArray(currentUsers)) {
+            currentUsers = currentUsers.filter(u => u.id !== userId);
+          } else {
+            currentUsers = [];
+          }
           displayUsers(currentUsers);
           updateStats(currentUsers);
           showToast('Usuario eliminado exitosamente', 'success');

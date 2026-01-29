@@ -39,11 +39,6 @@ public class WebController {
         return "mision";
     }
 
-    @GetMapping("/planes")
-    public String planes(Model model) {
-        return "planes";
-    }
-
     @GetMapping("/enlace")
     public String enlace(Model model) {
         return "enlace";
