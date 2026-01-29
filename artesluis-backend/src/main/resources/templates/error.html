@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Error - Artes Luis Studio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <div class="error-page">
+          <h1 class="display-1">😔</h1>
+          <h2 class="mb-4">¡Ups! Algo salió mal</h2>
+          
+          <div class="alert alert-danger">
+            <h5>Error <span th:text="${status}">500</span></h5>
+            <p th:text="${message}">Ha ocurrido un error inesperado</p>
+          </div>
+          
+          <div class="mt-4">
+            <a th:href="@{/}" class="btn btn-primary">
+              <i class="fas fa-home"></i> Volver al Inicio
+            </a>
+            <a th:href="@{/planes}" class="btn btn-outline-primary">
+              <i class="fas fa-list"></i> Ver Planes
+            </a>
+          </div>
+          
+          <div class="mt-4">
+            <small class="text-muted">
+              Si el problema persiste, contacta con soporte: info@artesluis.com
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

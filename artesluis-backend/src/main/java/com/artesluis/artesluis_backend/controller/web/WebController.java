@@ -62,20 +62,6 @@ public class WebController {
         model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "admin";
     }
-    
-    // Método simple para simular login (solo para pruebas)
-    @GetMapping("/demo-login")
-    public String demoLogin(HttpSession session) {
-        // Simular un usuario logueado
-        session.setAttribute("usuario", "demo@example.com");
-        return "redirect:/planes";
-    }
-    
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/";
-    }
 
     // Endpoint para servir imágenes estáticas con manejo de errores
     @GetMapping("/img/{imageName}")

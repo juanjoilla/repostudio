@@ -1,0 +1,43 @@
+package com.artesluis.artesluis_backend.controller.web;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class CustomErrorController implements ErrorController {
+
+    @RequestMapping("/error")
+    public String handleError(HttpServletRequest request, Model model) {
+        Object status = request.getAttribute("javax.servlet.error.status_code");
+        Object message = request.getAttribute("javax.servlet.error.message");
+        Object exception = request.getAttribute("javax.servlet.error.exception");
+
+        if (status != null) {
+            int statusCode = Integer.valueOf(status.toString());
+            model.addAttribute("status", statusCode);
+            
+            switch (statusCode) {
+                case 404:
+                    model.addAttribute("message", "La página que buscas no existe");
+                    break;
+                case 500:
+                    model.addAttribute("message", "Error interno del servidor");
+                    break;
+                case 403:
+                    model.addAttribute("message", "No tienes permisos para acceder a esta página");
+                    break;
+                default:
+                    model.addAttribute("message", "Ha ocurrido un error inesperado");
+            }
+        } else {
+            model.addAttribute("status", "Error");
+            model.addAttribute("message", "Ha ocurrido un error inesperado");
+        }
+
+        return "error";
+    }
+}

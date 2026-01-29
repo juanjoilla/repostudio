@@ -36,11 +36,79 @@
       <!-- Enlaces adicionales -->
       <div class="login-links">
         <a th:href="@{/}" class="link-home">← Volver al inicio</a>
+        <div class="mt-3">
+          <small class="text-muted">
+            Usuarios de prueba:<br>
+            <strong>Cliente:</strong> maria@ejemplo.com / cliente123<br>
+            <strong>Admin:</strong> admin@artesluis.com / admin123
+          </small>
+        </div>
+        <div class="mt-2">
+          <a href="/demo-login?correo=maria@ejemplo.com" class="btn btn-sm btn-outline-primary">
+            Login Rápido Cliente
+          </a>
+          <a href="/demo-login?correo=admin@artesluis.com" class="btn btn-sm btn-outline-secondary">
+            Login Rápido Admin
+          </a>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- JavaScript -->         
   <script th:src="@{/js/artesluis.js}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('loginForm');
+      const messageElement = document.getElementById('loginMessage');
+      
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const correo = document.getElementById('correo').value;
+        const password = document.getElementById('password').value;
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        
+        // Deshabilitar botón y mostrar loading
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Iniciando...';
+        messageElement.textContent = '';
+        
+        // Enviar datos de login
+        fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `correo=${encodeURIComponent(correo)}&password=${encodeURIComponent(password)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            messageElement.style.color = 'green';
+            messageElement.textContent = data.message;
+            
+            // Redirigir después de un breve delay
+            setTimeout(() => {
+              window.location.href = data.redirectUrl;
+            }, 1000);
+          } else {
+            messageElement.style.color = 'red';
+            messageElement.textContent = data.message;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          messageElement.style.color = 'red';
+          messageElement.textContent = 'Error de conexión. Intenta de nuevo.';
+        })
+        .finally(() => {
+          // Rehabilitar botón
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Ingresar';
+        });
+      });
+    });
+  </script>
 </body>
 </html>
