@@ -30,10 +30,18 @@ public class PlanController {
         List<Plan> planes = planService.obtenerPlanesOrdenadosPorRecomendacion();
         model.addAttribute("planes", planes);
         
-        // Contar items en el carrito para mostrar en la interfaz
-        String sessionId = session.getId();
-        int itemsEnCarrito = carritoService.contarItemsEnCarrito(sessionId);
-        model.addAttribute("itemsEnCarrito", itemsEnCarrito);
+        // Verificar si el usuario está logueado
+        boolean usuarioLogueado = session.getAttribute("usuario") != null;
+        model.addAttribute("usuarioLogueado", usuarioLogueado);
+        
+        // Contar items en el carrito para mostrar en la interfaz (solo si está logueado)
+        if (usuarioLogueado) {
+            String sessionId = session.getId();
+            int itemsEnCarrito = carritoService.contarItemsEnCarrito(sessionId);
+            model.addAttribute("itemsEnCarrito", itemsEnCarrito);
+        } else {
+            model.addAttribute("itemsEnCarrito", 0);
+        }
         
         return "planes";
     }
@@ -46,6 +54,14 @@ public class PlanController {
             HttpSession session) {
         
         Map<String, Object> response = new HashMap<>();
+        
+        // Verificar si el usuario está logueado
+        if (session.getAttribute("usuario") == null) {
+            response.put("success", false);
+            response.put("message", "Debes iniciar sesión para agregar items al carrito");
+            response.put("requireLogin", true);
+            return ResponseEntity.status(401).body(response);
+        }
         
         try {
             String sessionId = session.getId();
@@ -67,11 +83,17 @@ public class PlanController {
     
     @GetMapping("/carrito")
     public String mostrarCarrito(Model model, HttpSession session) {
+        // Verificar si el usuario está logueado
+        if (session.getAttribute("usuario") == null) {
+            return "redirect:/login";
+        }
+        
         String sessionId = session.getId();
         Carrito carrito = carritoService.obtenerCarritoPorSession(sessionId);
         
         model.addAttribute("carrito", carrito);
         model.addAttribute("itemsEnCarrito", carrito.contarItems());
+        model.addAttribute("usuarioLogueado", true);
         
         return "carrito";
     }

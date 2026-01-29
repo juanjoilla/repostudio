@@ -1,5 +1,6 @@
 package com.artesluis.artesluis_backend.controller.web;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -15,43 +16,65 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class WebController {
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, HttpSession session) {
+        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "index";
     }
 
     @GetMapping("/nosotros")
-    public String nosotros(Model model) {
+    public String nosotros(Model model, HttpSession session) {
+        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "nosotros";
     }
 
     @GetMapping("/portafolio")
-    public String portafolio(Model model) {
+    public String portafolio(Model model, HttpSession session) {
+        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "portafolio";
     }
 
     @GetMapping("/contacto")
-    public String contacto(Model model) {
+    public String contacto(Model model, HttpSession session) {
+        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "contacto";
     }
 
     @GetMapping("/mision")
-    public String mision(Model model) {
+    public String mision(Model model, HttpSession session) {
+        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "mision";
     }
 
     @GetMapping("/enlace")
-    public String enlace(Model model) {
+    public String enlace(Model model, HttpSession session) {
+        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "enlace";
     }
 
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(Model model, HttpSession session) {
+        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "login";
     }
 
     @GetMapping("/admin")
-    public String admin(Model model) {
+    public String admin(Model model, HttpSession session) {
+        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "admin";
+    }
+    
+    // Método simple para simular login (solo para pruebas)
+    @GetMapping("/demo-login")
+    public String demoLogin(HttpSession session) {
+        // Simular un usuario logueado
+        session.setAttribute("usuario", "demo@example.com");
+        return "redirect:/planes";
+    }
+    
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
     }
 
     // Endpoint para servir imágenes estáticas con manejo de errores

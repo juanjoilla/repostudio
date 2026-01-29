@@ -31,7 +31,7 @@
           <li class="nav-item"><a class="nav-link" th:href="@{/portafolio}">Portafolio</a></li>
           <li class="nav-item"><a class="nav-link" th:href="@{/contacto}">Contacto</a></li>
           <li class="nav-item"><a class="nav-link" th:href="@{/login}">Login</a></li>
-          <li class="nav-item">
+          <li class="nav-item" th:if="${usuarioLogueado}">
             <a class="nav-link" th:href="@{/planes/carrito}">
               <i class="fas fa-shopping-cart"></i> 
               <span class="badge bg-danger" th:text="${itemsEnCarrito}" th:if="${itemsEnCarrito > 0}">0</span>
@@ -103,14 +103,30 @@
   <!-- Script específico para carrito -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Verificar si el usuario está logueado
+      const usuarioLogueado = /*[[${usuarioLogueado}]]*/ false;
+      
       // Agregar event listeners a todos los botones de "Elegir Plan"
       document.querySelectorAll('.agregar-carrito-btn').forEach(function(button) {
         button.addEventListener('click', function() {
+          // Verificar autenticación primero
+          if (!usuarioLogueado) {
+            showAlert('warning', 'Debes iniciar sesión para agregar planes al carrito');
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 2000);
+            return;
+          }
+          
           const planId = this.getAttribute('data-plan-id');
           const planNombre = this.getAttribute('data-plan-nombre');
           
+          console.log('Plan ID:', planId); // Debug
+          console.log('Plan Nombre:', planNombre); // Debug
+          
           // Deshabilitar el botón mientras se procesa
           button.disabled = true;
+          const originalText = button.innerHTML;
           button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Agregando...';
           
           // Enviar request para agregar al carrito
@@ -143,21 +159,24 @@
               // Mostrar mensaje de éxito
               showAlert('success', `${planNombre} agregado al carrito exitosamente`);
               
-              // Restaurar botón
-              button.innerHTML = 'Elegir Plan';
-              button.disabled = false;
             } else {
-              showAlert('error', data.message);
-              // Restaurar botón
-              button.innerHTML = 'Elegir Plan';
-              button.disabled = false;
+              if (data.requireLogin) {
+                showAlert('warning', data.message);
+                setTimeout(() => {
+                  window.location.href = '/login';
+                }, 2000);
+              } else {
+                showAlert('error', data.message);
+              }
             }
           })
           .catch(error => {
             console.error('Error:', error);
             showAlert('error', 'Error al agregar el plan al carrito');
+          })
+          .finally(() => {
             // Restaurar botón
-            button.innerHTML = 'Elegir Plan';
+            button.innerHTML = originalText;
             button.disabled = false;
           });
         });
@@ -167,7 +186,12 @@
     function showAlert(type, message) {
       // Crear el alert
       const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+      let alertClass = 'alert-info';
+      if (type === 'success') alertClass = 'alert-success';
+      else if (type === 'error') alertClass = 'alert-danger';
+      else if (type === 'warning') alertClass = 'alert-warning';
+      
+      alertDiv.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
       alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
       alertDiv.innerHTML = `
         ${message}
