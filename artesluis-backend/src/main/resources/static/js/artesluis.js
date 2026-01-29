@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (data.usuario.rol === 'ADMIN') {
             window.location.href = '/admin';
           } else {
-            window.location.href = '/dashboard';
+            window.location.href = '/planes';
           }
         } else {
           message.textContent = data.message || 'Usuario o contraseña incorrectos.';

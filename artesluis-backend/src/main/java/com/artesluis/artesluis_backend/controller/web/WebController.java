@@ -62,6 +62,12 @@ public class WebController {
         model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
         return "admin";
     }
+    
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session) {
+        // Redireccionar dashboard a admin para compatibilidad
+        return "redirect:/admin";
+    }
 
     // Endpoint para servir imágenes estáticas con manejo de errores
     @GetMapping("/img/{imageName}")

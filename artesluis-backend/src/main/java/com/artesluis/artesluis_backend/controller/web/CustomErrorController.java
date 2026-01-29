@@ -31,12 +31,15 @@ public class CustomErrorController implements ErrorController {
                     model.addAttribute("message", "No tienes permisos para acceder a esta página");
                     break;
                 default:
-                    model.addAttribute("message", "Ha ocurrido un error inesperado");
+                    model.addAttribute("message", "Ha ocurrido un error inesperado (Código " + statusCode + ")");
             }
         } else {
-            model.addAttribute("status", "Error");
+            model.addAttribute("status", "Desconocido");
             model.addAttribute("message", "Ha ocurrido un error inesperado");
         }
+        
+        // Agregar información de usuario logueado para navegación consistente
+        model.addAttribute("usuarioLogueado", request.getSession().getAttribute("usuario") != null);
 
         return "error";
     }

@@ -8,6 +8,32 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
+  <!-- Navegación -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" th:href="@{/}">Artes Luis Studio</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" th:href="@{/}">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/nosotros}">Nosotros</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/mision}">Misión</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/planes}">Planes</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/portafolio}">Portafolio</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/contacto}">Contacto</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/login}">Login</a></li>
+          <li class="nav-item" th:if="${usuarioLogueado}">
+            <a class="nav-link" th:href="@{/planes/carrito}">
+              <i class="fas fa-shopping-cart"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6 text-center">
@@ -16,7 +42,8 @@
           <h2 class="mb-4">¡Ups! Algo salió mal</h2>
           
           <div class="alert alert-danger">
-            <h5>Error <span th:text="${status}">500</span></h5>
+            <h5 th:if="${status != null}">Error <span th:text="${status}">500</span></h5>
+            <h5 th:unless="${status != null}">Error Desconocido</h5>
             <p th:text="${message}">Ha ocurrido un error inesperado</p>
           </div>
           
@@ -40,5 +67,6 @@
   </div>
   
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
