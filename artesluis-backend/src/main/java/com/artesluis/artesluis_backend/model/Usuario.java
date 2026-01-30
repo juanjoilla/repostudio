@@ -78,5 +78,15 @@ public class Usuario {
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
     }
+    
+    // Método para verificar si el usuario es administrador
+    public boolean isAdmin() {
+        return rol != null && "ADMIN".equals(rol.getNombre());
+    }
+    
+    // Método para accesibilidad del email desde CheckoutController
+    public String getEmail() {
+        return correo;
+    }
 
 }

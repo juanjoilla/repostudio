@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Orden - ArtesLuis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-palette me-2"></i>ArtesLuis
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <!-- Usuario logueado -->
+                <div class="nav-item dropdown" th:if="${usuario}">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i>
+                        <span th:text="${usuario.nombre}">Usuario</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/perfil">
+                            <i class="fas fa-user-circle me-2"></i>Mi Perfil
+                        </a></li>
+                        <li><a class="dropdown-item" href="/mis-ordenes">
+                            <i class="fas fa-shopping-bag me-2"></i>Mis Órdenes
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Estado de la orden -->
+                <div class="text-center mb-4">
+                    <div th:if="${orden.estado.name() == 'PAGADO'}" class="alert alert-success">
+                        <i class="fas fa-check-circle fs-2 mb-2"></i>
+                        <h3>¡Pago Procesado Exitosamente!</h3>
+                        <p class="mb-0">Su orden ha sido confirmada y será procesada pronto.</p>
+                    </div>
+                    <div th:if="${orden.estado.name() == 'PENDIENTE'}" class="alert alert-warning">
+                        <i class="fas fa-clock fs-2 mb-2"></i>
+                        <h3>Orden Creada - Pago Pendiente</h3>
+                        <p class="mb-0">Su orden está pendiente de confirmación de pago.</p>
+                    </div>
+                </div>
+
+                <!-- Detalles de la orden -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-receipt me-2"></i>Detalles de la Orden</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6>Información de la Orden</h6>
+                                <p class="mb-1"><strong>Número de Orden:</strong> <span th:text="${orden.numeroOrden}">ORD-001</span></p>
+                                <p class="mb-1"><strong>Fecha:</strong> <span th:text="${#temporals.format(orden.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span></p>
+                                <p class="mb-1">
+                                    <strong>Estado:</strong> 
+                                    <span th:class="${orden.estado.name() == 'PAGADO' ? 'badge bg-success' : 
+                                                   orden.estado.name() == 'PENDIENTE' ? 'badge bg-warning' : 
+                                                   orden.estado.name() == 'COMPLETADO' ? 'badge bg-primary' : 
+                                                   orden.estado.name() == 'CANCELADO' ? 'badge bg-danger' : 'badge bg-secondary'}"
+                                          th:text="${orden.estado.name() == 'PAGADO' ? 'Pagado' : 
+                                                   orden.estado.name() == 'PENDIENTE' ? 'Pendiente' : 
+                                                   orden.estado.name() == 'COMPLETADO' ? 'Completado' : 
+                                                   orden.estado.name() == 'EN_PROCESO' ? 'En Proceso' : 
+                                                   orden.estado.name() == 'CANCELADO' ? 'Cancelado' : 
+                                                   orden.estado.name() == 'REEMBOLSADO' ? 'Reembolsado' : orden.estado}">
+                                        Pagado
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Cliente</h6>
+                                <p class="mb-1"><strong>Nombre:</strong> <span th:text="${usuario.nombre}">Usuario</span></p>
+                                <p class="mb-1"><strong>Email:</strong> <span th:text="${usuario.correo}">email@ejemplo.com</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Items de la orden -->
+                        <h6>Items de la Orden</h6>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto/Servicio</th>
+                                        <th class="text-center">Cantidad</th>
+                                        <th class="text-end">Precio Unitario</th>
+                                        <th class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="detalle : ${orden.detalles}">
+                                        <td>
+                                            <h6 class="mb-1" th:text="${detalle.nombrePlan}">Nombre del Plan</h6>
+                                            <small class="text-muted" th:text="${detalle.descripcionPlan}">Descripción del plan</small>
+                                        </td>
+                                        <td class="text-center" th:text="${detalle.cantidad}">1</td>
+                                        <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(detalle.precioUnitario, 0, 2)}">$50.00</td>
+                                        <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(detalle.calcularSubtotal(), 0, 2)}">$50.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Totales -->
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Subtotal:</strong></td>
+                                            <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(orden.subtotal, 0, 2)}">$50.00</td>
+                                        </tr>
+                                        <tr th:if="${orden.descuento != null and orden.descuento > 0}">
+                                            <td><strong>Descuento:</strong></td>
+                                            <td class="text-end text-success" th:text="'-$' + ${#numbers.formatDecimal(orden.descuento, 0, 2)}">-$5.00</td>
+                                        </tr>
+                                        <tr class="table-primary">
+                                            <td><strong>Total:</strong></td>
+                                            <td class="text-end fw-bold fs-5" th:text="'$' + ${#numbers.formatDecimal(orden.total, 0, 2)}">$50.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de pagos -->
+                <div class="card mt-4" th:if="${not #lists.isEmpty(pagos)}">
+                    <div class="card-header">
+                        <h5><i class="fas fa-credit-card me-2"></i>Información de Pagos</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3" th:each="pago : ${pagos}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <span th:text="${pago.metodoPago.name() == 'TARJETA_CREDITO' ? 'Tarjeta de Crédito' : 
+                                                       pago.metodoPago.name() == 'TARJETA_DEBITO' ? 'Tarjeta de Débito' :
+                                                       pago.metodoPago.name() == 'TRANSFERENCIA_BANCARIA' ? 'Transferencia Bancaria' :
+                                                       pago.metodoPago.name() == 'SERVICIO_DIGITAL' ? 'Servicio Digital' :
+                                                       pago.metodoPago.name() == 'EFECTIVO' ? 'Efectivo' : pago.metodoPago}">
+                                            Método de Pago
+                                        </span>
+                                    </h6>
+                                    <p class="mb-1" th:if="${pago.referenciaPago}">
+                                        <small><strong>Referencia:</strong> <span th:text="${pago.referenciaPago}">REF-001</span></small>
+                                    </p>
+                                    <p class="mb-1" th:if="${pago.numeroTarjetaUltimos4}">
+                                        <small><strong>Tarjeta:</strong> ****<span th:text="${pago.numeroTarjetaUltimos4}">1234</span></small>
+                                    </p>
+                                    <p class="mb-1" th:if="${pago.notas != null and #strings.contains(pago.notas, 'Banco:')}">
+                                        <small><strong>Banco:</strong> <span th:text="${#strings.substringAfter(pago.notas, 'Banco: ')}">Banco</span></small>
+                                    </p>
+                                    <p class="mb-1" th:if="${pago.notas != null and #strings.contains(pago.notas, 'Servicio:')}">
+                                        <small><strong>Servicio:</strong> <span th:text="${#strings.substringBefore(#strings.substringAfter(pago.notas, 'Servicio: '), ' - Email:')}">PayPal</span></small>
+                                    </p>
+                                    <p class="mb-1">
+                                        <small><strong>Fecha:</strong> <span th:text="${#temporals.format(pago.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span></small>
+                                    </p>
+                                    <p class="mb-0" th:if="${pago.gatewayResponse}">
+                                        <small class="text-muted" th:text="${pago.gatewayResponse}">Respuesta del gateway</small>
+                                    </p>
+                                </div>
+                                <div class="text-end">
+                                    <p class="mb-1 fw-bold" th:text="'$' + ${#numbers.formatDecimal(pago.monto, 0, 2)}">$50.00</p>
+                                    <span th:class="${pago.estado.name() == 'COMPLETADO' ? 'badge bg-success' : 
+                                                   pago.estado.name() == 'PENDIENTE' ? 'badge bg-warning' : 
+                                                   pago.estado.name() == 'FALLIDO' ? 'badge bg-danger' : 'badge bg-secondary'}"
+                                          th:text="${pago.estado.name() == 'COMPLETADO' ? 'Completado' : 
+                                                   pago.estado.name() == 'PENDIENTE' ? 'Pendiente' : 
+                                                   pago.estado.name() == 'FALLIDO' ? 'Fallido' : pago.estado}">
+                                        Completado
+                                    </span>
+                                </div>
+                            </div>
+                            <hr th:unless="${pagoStat.last}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Próximos pasos -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-info-circle me-2"></i>Próximos Pasos</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${orden.estado.name() == 'PAGADO'}">
+                            <h6>¡Su orden ha sido confirmada!</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Recibirá un email de confirmación en breve</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Nuestro equipo se pondrá en contacto con usted para coordinar los detalles</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Puede consultar el estado de su orden en cualquier momento</li>
+                            </ul>
+                        </div>
+                        <div th:if="${orden.estado.name() == 'PENDIENTE'}">
+                            <h6>Pago Pendiente</h6>
+                            <div th:if="${pagos.size() > 0 and pagos[0].metodoPago.name() == 'TRANSFERENCIA_BANCARIA'}">
+                                <p>Para completar su orden, realice la transferencia bancaria a la siguiente cuenta:</p>
+                                <div class="alert alert-info">
+                                    <strong>Datos Bancarios:</strong><br>
+                                    Banco: Bancolombia<br>
+                                    Cuenta: 123-456-789<br>
+                                    Titular: ArtesLuis SAS<br>
+                                    Valor: <span th:text="'$' + ${#numbers.formatDecimal(orden.total, 0, 2)}">$50.00</span><br>
+                                    <strong>Referencia:</strong> <span th:text="${orden.numeroOrden}">ORD-001</span>
+                                </div>
+                            </div>
+                            <div th:if="${pagos.size() > 0 and pagos[0].metodoPago.name() == 'EFECTIVO'}">
+                                <p>Para completar su orden, contacte con nosotros para coordinar el pago en efectivo:</p>
+                                <div class="alert alert-info">
+                                    <strong>Contacto:</strong><br>
+                                    Teléfono: (123) 456-7890<br>
+                                    Email: ventas@artesluis.com<br>
+                                    <strong>Referencia:</strong> <span th:text="${orden.numeroOrden}">ORD-001</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-primary me-3">
+                        <i class="fas fa-home me-2"></i>Volver al Inicio
+                    </a>
+                    <a href="/mis-ordenes" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-2"></i>Ver Mis Órdenes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

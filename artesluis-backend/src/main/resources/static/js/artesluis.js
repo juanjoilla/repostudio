@@ -202,27 +202,28 @@ document.addEventListener("DOMContentLoaded", () => {
       const message = document.getElementById("loginMessage");
 
       try {
-        const response = await fetch('/api/usuarios/login', {
+        // Usar FormData para enviar como form
+        const formData = new FormData();
+        formData.append('correo', correo);
+        formData.append('password', password);
+
+        const response = await fetch('/login', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ correo, password })
+          body: formData,
+          credentials: 'include' // Importante: incluir cookies de sesión
         });
 
         const data = await response.json();
 
         if (data.success) {
-          // Guardar información del usuario en localStorage
-          localStorage.setItem('usuario', JSON.stringify(data.usuario));
-          localStorage.setItem('isLoggedIn', 'true');
+          // El usuario ya está guardado en la sesión del servidor
+          message.textContent = data.message || 'Inicio de sesión exitoso';
+          message.className = 'success-message';
           
-          // Redirigir según el rol
-          if (data.usuario.rol === 'ADMIN') {
-            window.location.href = '/admin';
-          } else {
-            window.location.href = '/planes';
-          }
+          // Redirigir según la URL que nos devuelve el servidor
+          setTimeout(() => {
+            window.location.href = data.redirectUrl || '/planes';
+          }, 1000);
         } else {
           message.textContent = data.message || 'Usuario o contraseña incorrectos.';
           message.className = 'error-message';
@@ -234,15 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Protección de rutas administrativas
-  if (window.location.pathname.includes("/admin")) {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
-    const logged = localStorage.getItem("isLoggedIn");
-    
-    if (logged !== "true" || usuario.rol !== "ADMIN") {
-      window.location.href = "/login";
-    }
-  }
+  // Nota: La protección de rutas se maneja ahora en el servidor
+  // El sistema usa sesiones HTTP en lugar de localStorage
 
   // Botón de logout
   const logoutBtn = document.getElementById("logoutBtn");
@@ -253,33 +247,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Función de logout
 function logout() {
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('usuario');
-  window.location.href = '/login';
+  // Hacer logout en el servidor
+  window.location.href = '/logout';
 }
 
 // ===== UTILIDADES =====
 
-// Función para obtener usuario actual
-function getCurrentUser() {
-  return JSON.parse(localStorage.getItem('usuario') || '{}');
-}
-
-// Función para verificar si está autenticado
-function isAuthenticated() {
-  return localStorage.getItem('isLoggedIn') === 'true';
-}
-
-// Función para hacer peticiones autenticadas
+// Función para hacer peticiones con cookies de sesión incluidas
 async function authenticatedFetch(url, options = {}) {
-  const usuario = getCurrentUser();
-  
-  if (!isAuthenticated()) {
-    throw new Error('No autenticado');
-  }
-
   return fetch(url, {
     ...options,
+    credentials: 'include', // Incluir cookies de sesión
     headers: {
       'Content-Type': 'application/json',
       ...options.headers

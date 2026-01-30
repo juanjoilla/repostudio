@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ArtesLuis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-palette me-2"></i>ArtesLuis
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <!-- Usuario logueado -->
+                <div class="nav-item dropdown" th:if="${usuario}">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i>
+                        <span th:text="${usuario.nombre}">Usuario</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/perfil">
+                            <i class="fas fa-user-circle me-2"></i>Mi Perfil
+                        </a></li>
+                        <li><a class="dropdown-item" href="/mis-ordenes">
+                            <i class="fas fa-shopping-bag me-2"></i>Mis Órdenes
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/carrito">Carrito</a></li>
+                <li class="breadcrumb-item active">Checkout</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container mb-5">
+        <!-- Mensajes de alerta -->
+        <div th:if="${mensaje}" th:class="'alert alert-' + ${tipoMensaje == 'error' ? 'danger' : tipoMensaje} + ' alert-dismissible fade show'" role="alert">
+            <i th:class="'fas ' + ${tipoMensaje == 'success' ? 'fa-check-circle' : tipoMensaje == 'error' ? 'fa-exclamation-circle' : tipoMensaje == 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}" class="me-2"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div class="row">
+            <!-- Información de la orden -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-credit-card me-2"></i>Información de Pago</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="checkoutForm" action="/checkout/procesar" method="post">
+                            <!-- Método de Pago -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Método de Pago</label>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3" th:each="metodo : ${metodosPago}">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" 
+                                                   name="metodoPago" th:value="${metodo}" 
+                                                   th:id="'metodo_' + ${metodo}"
+                                                   th:checked="${metodoStat.first}">
+                                            <label class="form-check-label" th:for="'metodo_' + ${metodo}">
+                                                <i th:class="${metodo == 'TARJETA_CREDITO' ? 'fas fa-credit-card' : 
+                                                              metodo == 'TARJETA_DEBITO' ? 'fas fa-credit-card' :
+                                                              metodo == 'TRANSFERENCIA_BANCARIA' ? 'fas fa-university' :
+                                                              metodo == 'SERVICIO_DIGITAL' ? 'fab fa-paypal' :
+                                                              metodo == 'EFECTIVO' ? 'fas fa-money-bill' : 'fas fa-payment'}" 
+                                                   class="me-2"></i>
+                                                <span th:text="${metodo == 'TARJETA_CREDITO' ? 'Tarjeta de Crédito' : 
+                                                              metodo == 'TARJETA_DEBITO' ? 'Tarjeta de Débito' :
+                                                              metodo == 'TRANSFERENCIA_BANCARIA' ? 'Transferencia Bancaria' :
+                                                              metodo == 'SERVICIO_DIGITAL' ? 'PayPal / Digital' :
+                                                              metodo == 'EFECTIVO' ? 'Efectivo' : metodo}"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Datos de Tarjeta -->
+                            <div id="datosTarjeta" class="payment-method-details">
+                                <h5>Datos de la Tarjeta</h5>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label">Número de Tarjeta</label>
+                                        <input type="text" class="form-control" name="numeroTarjeta" id="numeroTarjeta"
+                                               placeholder="1234 5678 9012 3456" maxlength="19">
+                                    </div>
+                                    <div class="col-md-8 mb-3">
+                                        <label class="form-label">Nombre del Titular</label>
+                                        <input type="text" class="form-control" name="nombreTitular" id="nombreTitular"
+                                               placeholder="Como aparece en la tarjeta">
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label class="form-label">Mes</label>
+                                        <select class="form-control" name="mesVencimiento" id="mesVencimiento">
+                                            <option value="">MM</option>
+                                            <option th:each="mes : ${#numbers.sequence(1,12)}" 
+                                                    th:value="${#strings.toString(mes).length() == 1 ? '0' + mes : mes}"
+                                                    th:text="${#strings.toString(mes).length() == 1 ? '0' + mes : mes}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label class="form-label">Año</label>
+                                        <select class="form-control" name="anoVencimiento" id="anoVencimiento">
+                                            <option value="">YYYY</option>
+                                            <option th:each="ano : ${#numbers.sequence(2024,2034)}" 
+                                                    th:value="${ano}" th:text="${ano}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">CVV</label>
+                                        <input type="text" class="form-control" name="cvv" id="cvv"
+                                               placeholder="123" maxlength="4">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Datos de Transferencia -->
+                            <div id="datosTransferencia" class="payment-method-details" style="display: none;">
+                                <h5>Datos de Transferencia</h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Banco <span class="text-danger">*</span></label>
+                                        <select class="form-control" name="bancoId" id="bancoId">
+                                            <option value="">Seleccione su banco</option>
+                                            <option th:each="banco : ${bancos}" 
+                                                    th:value="${banco.id}" 
+                                                    th:text="${banco.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Referencia de Transferencia (Opcional)</label>
+                                        <input type="text" class="form-control" name="referenciaBancaria" 
+                                               placeholder="Número de referencia">
+                                    </div>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Después de procesar la orden, recibirá los datos bancarios para realizar la transferencia.
+                                </div>
+                            </div>
+
+                            <!-- Datos de Servicio Digital -->
+                            <div id="datosDigital" class="payment-method-details" style="display: none;">
+                                <h5>Servicio Digital</h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Servicio</label>
+                                        <select class="form-control" name="servicioDigital">
+                                            <option value="">Seleccione el servicio</option>
+                                            <option value="PayPal">PayPal</option>
+                                            <option value="Mercado Pago">Mercado Pago</option>
+                                            <option value="Nequi">Nequi</option>
+                                            <option value="Daviplata">Daviplata</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email de la Cuenta</label>
+                                        <input type="email" class="form-control" name="emailServicio" 
+                                               placeholder="usuario@ejemplo.com">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Efectivo -->
+                            <div id="datosEfectivo" class="payment-method-details" style="display: none;">
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Pago en Efectivo:</strong> Deberá realizar el pago en nuestras oficinas 
+                                    o con uno de nuestros representantes. Se le proporcionarán los detalles de contacto 
+                                    después de procesar la orden.
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-lock me-2"></i>Procesar Pago
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen de la orden -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-shopping-cart me-2"></i>Resumen de la Orden</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Items del carrito -->
+                        <div class="mb-3" th:each="item : ${itemsCarrito}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1" th:text="${item.plan.nombre}">Nombre del Plan</h6>
+                                    <small class="text-muted">
+                                        Cantidad: <span th:text="${item.cantidad}">1</span>
+                                    </small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="fw-bold" th:text="'$' + ${#numbers.formatDecimal(item.precioUnitario * item.cantidad, 0, 2)}">
+                                        $50.00
+                                    </span>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+                        </div>
+
+                        <!-- Totales -->
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <span th:text="'$' + ${#numbers.formatDecimal(subtotal, 0, 2)}">$50.00</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Impuestos:</span>
+                                <span>$0.00</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total:</span>
+                            <span th:text="'$' + ${#numbers.formatDecimal(total, 0, 2)}" class="text-success">$50.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de seguridad -->
+                <div class="card mt-3">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt text-success fs-2 mb-2"></i>
+                        <h6>Pago Seguro</h6>
+                        <small class="text-muted">
+                            Su información está protegida con encriptación SSL de 256 bits
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const metodoPagoInputs = document.querySelectorAll('input[name="metodoPago"]');
+            const paymentDetails = document.querySelectorAll('.payment-method-details');
+            const bancoIdSelect = document.getElementById('bancoId');
+
+            function mostrarDetallesPago() {
+                // Ocultar todos los detalles
+                paymentDetails.forEach(detail => detail.style.display = 'none');
+
+                // Mostrar el detalle correspondiente
+                const metodoSeleccionado = document.querySelector('input[name="metodoPago"]:checked').value;
+                
+                // Remover atributo name de todos los campos para que no se envíen
+                if (bancoIdSelect) bancoIdSelect.removeAttribute('required');
+                document.querySelectorAll('#datosTarjeta input, #datosTarjeta select').forEach(field => {
+                    field.setAttribute('data-name', field.getAttribute('name') || '');
+                    field.removeAttribute('name');
+                });
+                document.querySelectorAll('#datosTransferencia input, #datosTransferencia select').forEach(field => {
+                    field.setAttribute('data-name', field.getAttribute('name') || field.getAttribute('data-name') || '');
+                    field.removeAttribute('name');
+                });
+                document.querySelectorAll('#datosDigital input, #datosDigital select').forEach(field => {
+                    field.setAttribute('data-name', field.getAttribute('name') || field.getAttribute('data-name') || '');
+                    field.removeAttribute('name');
+                });
+                
+                if (metodoSeleccionado === 'TARJETA_CREDITO' || metodoSeleccionado === 'TARJETA_DEBITO') {
+                    document.getElementById('datosTarjeta').style.display = 'block';
+                    document.querySelectorAll('#datosTarjeta input, #datosTarjeta select').forEach(field => {
+                        const dataName = field.getAttribute('data-name');
+                        if (dataName) field.setAttribute('name', dataName);
+                    });
+                } else if (metodoSeleccionado === 'TRANSFERENCIA_BANCARIA') {
+                    document.getElementById('datosTransferencia').style.display = 'block';
+                    document.querySelectorAll('#datosTransferencia input, #datosTransferencia select').forEach(field => {
+                        const dataName = field.getAttribute('data-name');
+                        if (dataName) field.setAttribute('name', dataName);
+                    });
+                    if (bancoIdSelect) {
+                        bancoIdSelect.setAttribute('required', 'required');
+                    }
+                } else if (metodoSeleccionado === 'SERVICIO_DIGITAL') {
+                    document.getElementById('datosDigital').style.display = 'block';
+                    document.querySelectorAll('#datosDigital input, #datosDigital select').forEach(field => {
+                        const dataName = field.getAttribute('data-name');
+                        if (dataName) field.setAttribute('name', dataName);
+                    });
+                } else if (metodoSeleccionado === 'EFECTIVO') {
+                    document.getElementById('datosEfectivo').style.display = 'block';
+                }
+            }
+
+            // Agregar event listeners
+            metodoPagoInputs.forEach(input => {
+                input.addEventListener('change', mostrarDetallesPago);
+            });
+
+            // Mostrar detalles iniciales
+            mostrarDetallesPago();
+
+            // Formato de número de tarjeta
+            const numeroTarjetaInput = document.querySelector('input[name="numeroTarjeta"]');
+            if (numeroTarjetaInput) {
+                numeroTarjetaInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                    let formattedInputValue = value.match(/.{1,4}/g)?.join(' ');
+                    e.target.value = formattedInputValue || value;
+                });
+            }
+
+            // Validación del formulario
+            document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevenir envío inmediato
+                
+                const metodoSeleccionado = document.querySelector('input[name="metodoPago"]:checked').value;
+                console.log('========== VALIDACIÓN CHECKOUT ==========');
+                console.log('Método seleccionado:', metodoSeleccionado);
+                
+                // CRÍTICO: Asegurarnos de que solo los campos del método seleccionado tengan 'name'
+                // Primero remover TODOS los atributos 'name' de campos de pago
+                document.querySelectorAll('#datosTarjeta input, #datosTarjeta select').forEach(field => {
+                    if (field.id !== 'metodoPago') { // Preservar el radio button de método de pago
+                        field.removeAttribute('name');
+                    }
+                });
+                document.querySelectorAll('#datosTransferencia input, #datosTransferencia select').forEach(field => {
+                    field.removeAttribute('name');
+                });
+                document.querySelectorAll('#datosDigital input, #datosDigital select').forEach(field => {
+                    field.removeAttribute('name');
+                });
+                
+                let isValid = true;
+                
+                // Ahora restaurar SOLO los campos del método seleccionado
+                if (metodoSeleccionado === 'TARJETA_CREDITO' || metodoSeleccionado === 'TARJETA_DEBITO') {
+                    const numeroTarjeta = document.getElementById('numeroTarjeta');
+                    const nombreTitular = document.getElementById('nombreTitular');
+                    const mesVencimiento = document.getElementById('mesVencimiento');
+                    const anoVencimiento = document.getElementById('anoVencimiento');
+                    const cvv = document.getElementById('cvv');
+                    
+                    if (!numeroTarjeta.value || !nombreTitular.value || !mesVencimiento.value || !anoVencimiento.value || !cvv.value) {
+                        alert('Por favor complete todos los datos de la tarjeta');
+                        isValid = false;
+                    } else {
+                        // Restaurar nombres solo para estos campos
+                        numeroTarjeta.setAttribute('name', 'numeroTarjeta');
+                        nombreTitular.setAttribute('name', 'nombreTitular');
+                        mesVencimiento.setAttribute('name', 'mesVencimiento');
+                        anoVencimiento.setAttribute('name', 'anoVencimiento');
+                        cvv.setAttribute('name', 'cvv');
+                        console.log('Campos de tarjeta con name restaurados');
+                    }
+                    
+                } else if (metodoSeleccionado === 'TRANSFERENCIA_BANCARIA') {
+                    const bancoId = document.getElementById('bancoId');
+                    const referenciaBancaria = document.getElementById('referenciaBancaria');
+                    
+                    if (!bancoId.value) {
+                        alert('Por favor seleccione un banco');
+                        isValid = false;
+                    } else {
+                        // Restaurar nombres solo para estos campos
+                        bancoId.setAttribute('name', 'bancoId');
+                        if (referenciaBancaria) referenciaBancaria.setAttribute('name', 'referenciaBancaria');
+                        console.log('Campos de transferencia con name restaurados');
+                        console.log('bancoId:', bancoId.value);
+                        console.log('referenciaBancaria:', referenciaBancaria ? referenciaBancaria.value : 'N/A');
+                    }
+                    
+                } else if (metodoSeleccionado === 'SERVICIO_DIGITAL') {
+                    const servicioDigital = document.getElementById('servicioDigital');
+                    const emailServicio = document.getElementById('emailServicio');
+                    
+                    if (!servicioDigital.value || !emailServicio.value) {
+                        alert('Por favor complete los datos del servicio digital');
+                        isValid = false;
+                    } else {
+                        // Restaurar nombres solo para estos campos
+                        servicioDigital.setAttribute('name', 'servicioDigital');
+                        emailServicio.setAttribute('name', 'emailServicio');
+                        console.log('Campos de servicio digital con name restaurados');
+                    }
+                }
+                
+                // Si es válido, enviar el formulario
+                if (isValid) {
+                    console.log('Formulario válido, enviando...');
+                    console.log('========================================');
+                    // Remover el event listener para evitar loops
+                    this.removeEventListener('submit', arguments.callee);
+                    // Enviar el formulario usando submit() nativo
+                    this.submit();
+                } else {
+                    console.log('Formulario inválido, no se envía');
+                    console.log('========================================');
+                }
+                
+                return false; // Prevenir cualquier comportamiento por defecto
+            });
+        });
+    </script>
+</body>
+</html>

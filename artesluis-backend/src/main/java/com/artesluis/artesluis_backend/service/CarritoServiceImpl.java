@@ -3,6 +3,7 @@ package com.artesluis.artesluis_backend.service;
 import com.artesluis.artesluis_backend.model.Carrito;
 import com.artesluis.artesluis_backend.model.ItemCarrito;
 import com.artesluis.artesluis_backend.model.Plan;
+import com.artesluis.artesluis_backend.model.Usuario;
 import com.artesluis.artesluis_backend.repository.CarritoRepository;
 import com.artesluis.artesluis_backend.repository.ItemCarritoRepository;
 import com.artesluis.artesluis_backend.repository.PlanRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -96,5 +98,20 @@ public class CarritoServiceImpl implements CarritoService {
     public int contarItemsEnCarrito(String sessionId) {
         Carrito carrito = carritoRepository.findBySessionId(sessionId).orElse(null);
         return carrito != null ? carrito.contarItems() : 0;
+    }
+    
+    @Override
+    public List<ItemCarrito> obtenerItemsCarrito(Usuario usuario) {
+        // Para usuarios logueados, usamos el email como sessionId
+        // Esto permite mantener el carrito entre sesiones
+        String sessionId = "user_" + usuario.getId();
+        Carrito carrito = obtenerCarritoPorSession(sessionId);
+        return carrito.getItems();
+    }
+    
+    @Override
+    public void limpiarCarrito(Usuario usuario) {
+        String sessionId = "user_" + usuario.getId();
+        limpiarCarrito(sessionId);
     }
 }

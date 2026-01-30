@@ -11,6 +11,9 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <!-- Estilos personalizados -->
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
@@ -30,12 +33,30 @@
           <li class="nav-item"><a class="nav-link active" th:href="@{/planes}">Planes</a></li>
           <li class="nav-item"><a class="nav-link" th:href="@{/portafolio}">Portafolio</a></li>
           <li class="nav-item"><a class="nav-link" th:href="@{/contacto}">Contacto</a></li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/login}">Login</a></li>
-          <li class="nav-item" th:if="${usuarioLogueado}">
-            <a class="nav-link" th:href="@{/planes/carrito}">
-              <i class="fas fa-shopping-cart"></i> 
-              <span class="badge bg-danger" th:text="${itemsEnCarrito}" th:if="${itemsEnCarrito > 0}">0</span>
+          <!-- Mostrar Login solo si NO está logueado -->
+          <li class="nav-item" th:unless="${usuarioLogueado}">
+            <a class="nav-link" th:href="@{/login}">
+              <i class="fas fa-sign-in-alt"></i> Login
             </a>
+          </li>
+          <!-- Mostrar carrito y usuario si está logueado -->
+          <li class="nav-item" th:if="${usuarioLogueado}">
+            <a class="nav-link" th:href="@{/planes/carrito}" id="carrito-link">
+              <i class="fas fa-shopping-cart"></i> 
+              <span class="badge bg-danger" th:text="${itemsEnCarrito}" th:if="${itemsEnCarrito > 0}" id="cart-badge">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown" th:if="${usuarioLogueado}">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i> 
+              <span th:text="${session.usuario != null ? session.usuario.nombre : 'Usuario'}">Usuario</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+              <li><a class="dropdown-item" th:href="@{/planes/carrito}"><i class="fas fa-shopping-cart"></i> Mi Carrito</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
           </li>
         </ul>
       </div>
@@ -96,15 +117,13 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <script th:src="@{/js/artesluis.js}"></script>
   
   <!-- Script específico para carrito -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Verificar si el usuario está logueado
-      const usuarioLogueado = /*[[${usuarioLogueado}]]*/ false;
+      const usuarioLogueado = [[${usuarioLogueado}]];
       
       // Agregar event listeners a todos los botones de "Elegir Plan"
       document.querySelectorAll('.agregar-carrito-btn').forEach(function(button) {
@@ -135,22 +154,24 @@
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
+            credentials: 'include', // Importante: incluir cookies de sesión
             body: `planId=${planId}&cantidad=1`
           })
           .then(response => response.json())
           .then(data => {
             if (data.success) {
-              // Actualizar contador del carrito
-              const badge = document.querySelector('.badge');
+              // Actualizar contador del carrito usando ID específico
+              const badge = document.getElementById('cart-badge');
               if (badge) {
                 badge.textContent = data.itemsEnCarrito;
                 badge.style.display = data.itemsEnCarrito > 0 ? 'inline' : 'none';
               } else if (data.itemsEnCarrito > 0) {
                 // Crear badge si no existe
-                const carritoLink = document.querySelector('a[href="/planes/carrito"]');
+                const carritoLink = document.getElementById('carrito-link');
                 if (carritoLink) {
                   const newBadge = document.createElement('span');
                   newBadge.className = 'badge bg-danger';
+                  newBadge.id = 'cart-badge';
                   newBadge.textContent = data.itemsEnCarrito;
                   carritoLink.appendChild(newBadge);
                 }
