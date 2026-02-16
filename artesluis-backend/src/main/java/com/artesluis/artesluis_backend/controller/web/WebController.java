@@ -17,49 +17,73 @@ public class WebController {
 
     @GetMapping("/")
     public String index(Model model, HttpSession session) {
-        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
+        Object usuario = session.getAttribute("usuario");
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLogueado", usuario != null);
         return "index";
     }
 
     @GetMapping("/nosotros")
     public String nosotros(Model model, HttpSession session) {
-        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
+        Object usuario = session.getAttribute("usuario");
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLogueado", usuario != null);
         return "nosotros";
     }
 
     @GetMapping("/portafolio")
     public String portafolio(Model model, HttpSession session) {
-        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
+        Object usuario = session.getAttribute("usuario");
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLogueado", usuario != null);
         return "portafolio";
     }
 
     @GetMapping("/contacto")
     public String contacto(Model model, HttpSession session) {
-        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
+        Object usuario = session.getAttribute("usuario");
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLogueado", usuario != null);
         return "contacto";
     }
 
     @GetMapping("/mision")
     public String mision(Model model, HttpSession session) {
-        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
+        Object usuario = session.getAttribute("usuario");
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLogueado", usuario != null);
         return "mision";
     }
 
     @GetMapping("/enlace")
     public String enlace(Model model, HttpSession session) {
-        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
+        Object usuario = session.getAttribute("usuario");
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLogueado", usuario != null);
         return "enlace";
     }
 
     @GetMapping("/login")
     public String login(Model model, HttpSession session) {
-        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
+        Object usuario = session.getAttribute("usuario");
+        // Si ya está logueado, redirigir al admin
+        if (usuario != null) {
+            return "redirect:/admin";
+        }
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLogueado", false);
         return "login";
     }
 
     @GetMapping("/admin")
     public String admin(Model model, HttpSession session) {
-        model.addAttribute("usuarioLogueado", session.getAttribute("usuario") != null);
+        Object usuario = session.getAttribute("usuario");
+        // Si NO está logueado, redirigir al login
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioLogueado", true);
         return "admin";
     }
     

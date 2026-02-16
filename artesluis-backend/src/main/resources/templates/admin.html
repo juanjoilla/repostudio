@@ -8,8 +8,11 @@
   <!-- Bootstrap 5.3 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Bootstrap Icons - con fallback -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
+        integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" 
+        integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -68,42 +71,9 @@
           <h1 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Panel de Administración</h1>
           <p class="mb-0 mt-2">Artes Luis Studio</p>
         </div>
-        
-        <!-- Sección de autenticación -->
-        <div id="authSection" class="p-4">
-          <div class="row justify-content-center">
-            <div class="col-md-6">
-              <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                  <h4 class="card-title text-center mb-4">
-                    <i class="bi bi-person-check text-primary fs-1"></i><br>
-                    Iniciar Sesión
-                  </h4>
-                  <form id="adminLoginForm">
-                    <div class="mb-3">
-                      <label for="adminEmail" class="form-label">
-                        <i class="bi bi-envelope me-1"></i>Email de Administrador
-                      </label>
-                      <input type="email" class="form-control" id="adminEmail" required>
-                    </div>
-                    <div class="mb-4">
-                      <label for="adminPassword" class="form-label">
-                        <i class="bi bi-lock me-1"></i>Contraseña
-                      </label>
-                      <input type="password" class="form-control" id="adminPassword" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2">
-                      <i class="bi bi-box-arrow-in-right me-2"></i>Acceder
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- Panel de administración -->
-        <div id="adminPanel" style="display: none;" class="p-4">
+        <div id="adminPanel" class="p-4">
           
           <!-- Dashboard Header -->
           <div class="row mb-4">
@@ -123,30 +93,59 @@
             <!-- Se llenarán dinámicamente -->
           </div>
 
-          <!-- Action Buttons -->
-          <div class="row mb-4">
-            <div class="col-12">
-              <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                  <h5 class="card-title"><i class="bi bi-gear-fill me-2"></i>Acciones Rápidas</h5>
-                  <div class="d-flex flex-wrap action-buttons">
-                    <button id="loadUsersBtn" class="btn btn-success">
-                      <i class="bi bi-people-fill me-2"></i>Cargar Usuarios
-                    </button>
-                    <a href="/admin/ventas" class="btn btn-primary">
-                      <i class="bi bi-graph-up me-2"></i>Dashboard Ventas
-                    </a>
-                    <button id="refreshStatsBtn" class="btn btn-info">
-                      <i class="bi bi-arrow-clockwise me-2"></i>Actualizar Estadísticas
-                    </button>
-                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
-                      <i class="bi bi-search me-2"></i>Buscar Usuario
-                    </button>
+          <!-- Tabs de navegación -->
+          <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="/admin/ventas">
+                <i class="bi bi-chart-line me-2"></i>Dashboard Ventas
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="/admin/ventas/ordenes">
+                <i class="bi bi-cart-check-fill me-2"></i>Todas las Órdenes
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="usuarios-tab" data-bs-toggle="tab" 
+                      data-bs-target="#usuarios-panel" type="button" role="tab">
+                <i class="bi bi-people-fill me-2"></i>Gestión Usuarios
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="/admin/planes">
+                <i class="bi bi-box me-2"></i>Gestión Planes
+              </a>
+            </li>
+          </ul>
+
+          <!-- Tab Content -->
+          <div class="tab-content" id="adminTabsContent">
+            <!-- Panel de Usuarios -->
+            <div class="tab-pane fade show active" id="usuarios-panel" role="tabpanel">
+              <!-- Action Buttons -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                      <h5 class="card-title"><i class="bi bi-gear-fill me-2"></i>Acciones Rápidas</h5>
+                      <div class="d-flex flex-wrap action-buttons">
+                        <button id="loadUsersBtn" class="btn btn-success">
+                          <i class="bi bi-people-fill me-2"></i>Cargar Usuarios
+                        </button>
+                        <a href="/admin/ventas" class="btn btn-primary">
+                          <i class="bi bi-graph-up me-2"></i>Dashboard Ventas
+                        </a>
+                        <button id="refreshStatsBtn" class="btn btn-info">
+                          <i class="bi bi-arrow-clockwise me-2"></i>Actualizar Estadísticas
+                        </button>
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
+                          <i class="bi bi-search me-2"></i>Buscar Usuario
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
           
           <!-- Lista de usuarios -->
           <div class="row">
@@ -168,6 +167,107 @@
             </div>
           </div>
         </div>
+
+        <!-- Panel de Órdenes -->
+        <div class="tab-pane fade" id="ordenes-panel" role="tabpanel">
+          <!-- Filtros de búsqueda -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title"><i class="bi bi-funnel me-2"></i>Filtros de Búsqueda</h5>
+                  <form id="filtrosOrdenesForm" class="row g-3">
+                    <div class="col-md-3">
+                      <label class="form-label">Número de Orden</label>
+                      <input type="text" class="form-control" id="filtroNumeroOrden" placeholder="Ej: ORD-12345">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Estado</label>
+                      <select class="form-select" id="filtroEstado">
+                        <option value="">Todos</option>
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="PAGADO">Pagado</option>
+                        <option value="EN_PROCESO">En Proceso</option>
+                        <option value="COMPLETADO">Completado</option>
+                        <option value="CANCELADO">Cancelado</option>
+                        <option value="REEMBOLSADO">Reembolsado</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Email Cliente</label>
+                      <input type="email" class="form-control" id="filtroEmailCliente" placeholder="cliente@email.com">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                      <button type="button" class="btn btn-primary me-2" id="buscarOrdenesBtn">
+                        <i class="bi bi-search me-2"></i>Buscar
+                      </button>
+                      <button type="button" class="btn btn-secondary" id="limpiarFiltrosBtn">
+                        <i class="bi bi-x-circle me-2"></i>Limpiar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabla de órdenes -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0"><i class="bi bi-cart-check me-2"></i>Lista de Órdenes</h5>
+                  <div>
+                    <span class="badge bg-primary me-2" id="ordenCount">0 órdenes</span>
+                    <button class="btn btn-sm btn-success" id="cargarOrdenesBtn">
+                      <i class="bi bi-arrow-clockwise me-1"></i>Cargar Órdenes
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+                  <div id="ordenesTable" class="table-responsive">
+                    <div class="text-center p-4 text-muted">
+                      <i class="bi bi-cart-x fs-1"></i>
+                      <p class="mt-2">Haz clic en "Cargar Órdenes" para ver la lista</p>
+                    </div>
+                  </div>
+                  <div id="paginacionOrdenes" class="p-3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel de Reportes -->
+        <div class="tab-pane fade" id="reportes-panel" role="tabpanel">
+          <!-- Estadísticas de ventas -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0"><i class="bi bi-bar-chart-line me-2"></i>Estadísticas de Ventas</h5>
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-primary" data-dias="7">7 días</button>
+                      <button type="button" class="btn btn-sm btn-outline-primary active" data-dias="30">30 días</button>
+                      <button type="button" class="btn btn-sm btn-outline-primary" data-dias="90">90 días</button>
+                      <button type="button" class="btn btn-sm btn-primary" id="cargarEstadisticasBtn">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Cargar
+                      </button>
+                    </div>
+                  </div>
+                  <div id="estadisticasContainer">
+                    <div class="text-center p-4 text-muted">
+                      <i class="bi bi-clipboard-data fs-1"></i>
+                      <p class="mt-2">Haz clic en "Cargar" para ver las estadísticas</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -282,55 +382,27 @@
       document.getElementById('userCount').textContent = `${totalUsers} usuario${totalUsers !== 1 ? 's' : ''}`;
     }
 
-    // Función para autenticación de admin
-    document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('adminEmail').value;
-      const password = document.getElementById('adminPassword').value;
-      
-      // Loading state
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Verificando...';
-      submitBtn.disabled = true;
-      
+    // Cargar usuarios automáticamente al entrar
+    cargarUsuariosIniciales();
+    
+    async function cargarUsuariosIniciales() {
       try {
-        const response = await fetch('/api/admin/usuarios', {
-          method: 'POST',
+        const response = await fetch('/api/admin/usuarios/auto', {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ adminEmail: email, adminPassword: password })
+          }
         });
         
         if (response.ok) {
           const data = await response.json();
-          console.log('Admin Login API Response:', data); // Log para depuración
-          // Validar que data sea un array
           currentUsers = Array.isArray(data) ? data : [];
-          
-          document.getElementById('authSection').style.display = 'none';
-          document.getElementById('adminPanel').style.display = 'block';
-          
-          // Guardar credenciales para uso posterior
-          sessionStorage.setItem('adminEmail', email);
-          sessionStorage.setItem('adminPassword', password);
-          
-          // Actualizar estadísticas
           updateStats(currentUsers);
-          showToast('¡Bienvenido al panel de administración!', 'success');
-        } else {
-          showToast('Credenciales incorrectas', 'error');
         }
       } catch (error) {
-        console.error('Error:', error);
-        showToast('Error de conexión', 'error');
-      } finally {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
+        console.error('Error al cargar usuarios iniciales:', error);
       }
-    });
+    }
     
     // Cargar usuarios
     document.getElementById('loadUsersBtn').addEventListener('click', async function() {
@@ -641,14 +713,507 @@
       });
       
       if (result.isConfirmed) {
-        sessionStorage.removeItem('adminEmail');
-        sessionStorage.removeItem('adminPassword');
-        document.getElementById('adminPanel').style.display = 'none';
-        document.getElementById('authSection').style.display = 'block';
-        document.getElementById('adminLoginForm').reset();
-        currentUsers = [];
-        showToast('Sesión cerrada correctamente', 'info');
+        // Redirigir a logout del servidor
+        window.location.href = '/logout';
       }
+    });
+    
+    // ============================================
+    // GESTIÓN DE ÓRDENES
+    // ============================================
+    
+    let currentOrdenes = [];
+    let currentPage = 0;
+    let diasSeleccionados = 30;
+    
+    // Cargar órdenes con filtros
+    async function cargarOrdenes(page = 0) {
+      const adminEmail = sessionStorage.getItem('adminEmail');
+      const adminPassword = sessionStorage.getItem('adminPassword');
+      
+      const numeroOrden = document.getElementById('filtroNumeroOrden').value;
+      const estado = document.getElementById('filtroEstado').value;
+      const emailCliente = document.getElementById('filtroEmailCliente').value;
+      
+      const btn = document.getElementById('cargarOrdenesBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Cargando...';
+      btn.disabled = true;
+      
+      try {
+        const response = await fetch('/api/admin/ordenes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            adminEmail,
+            adminPassword,
+            numeroOrden: numeroOrden || null,
+            estado: estado || null,
+            emailCliente: emailCliente || null,
+            page,
+            size: 20
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            currentOrdenes = data.ordenes || [];
+            currentPage = data.currentPage || 0;
+            displayOrdenes(currentOrdenes);
+            displayPaginacion(data.currentPage, data.totalPages, data.totalItems);
+            document.getElementById('ordenCount').textContent = `${data.totalItems} orden${data.totalItems !== 1 ? 'es' : ''}`;
+            showToast('Órdenes cargadas correctamente', 'success');
+          }
+        } else {
+          showToast('Error al cargar órdenes', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+    
+    // Mostrar órdenes en tabla
+    function displayOrdenes(ordenes) {
+      if (!Array.isArray(ordenes) || ordenes.length === 0) {
+        document.getElementById('ordenesTable').innerHTML = `
+          <div class="text-center p-4 text-muted">
+            <i class="bi bi-cart-x fs-1"></i>
+            <p class="mt-2">No se encontraron órdenes</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const tableHtml = `
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Número</th>
+              <th>Cliente</th>
+              <th>Email</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ordenes.map(orden => `
+              <tr>
+                <td><strong>${orden.numeroOrden}</strong></td>
+                <td>${orden.nombreCliente || 'N/A'}</td>
+                <td><small>${orden.emailCliente || 'N/A'}</small></td>
+                <td><strong>$${parseFloat(orden.total).toFixed(2)}</strong></td>
+                <td>${getBadgeEstado(orden.estado)}</td>
+                <td><small>${formatearFecha(orden.fechaCreacion)}</small></td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" onclick="verDetalleOrden(${orden.id})" title="Ver detalles">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-outline-warning" onclick="cambiarEstadoOrden(${orden.id}, '${orden.estado}')" title="Cambiar estado">
+                      <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      document.getElementById('ordenesTable').innerHTML = tableHtml;
+    }
+    
+    // Mostrar paginación
+    function displayPaginacion(currentPage, totalPages, totalItems) {
+      if (totalPages <= 1) {
+        document.getElementById('paginacionOrdenes').innerHTML = '';
+        return;
+      }
+      
+      let paginacionHtml = `
+        <nav>
+          <ul class="pagination justify-content-center mb-0">
+            <li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+              <a class="page-link" href="#" onclick="event.preventDefault(); cargarOrdenes(${currentPage - 1})">Anterior</a>
+            </li>
+      `;
+      
+      // Mostrar máximo 5 páginas
+      const inicio = Math.max(0, currentPage - 2);
+      const fin = Math.min(totalPages, inicio + 5);
+      
+      for (let i = inicio; i < fin; i++) {
+        paginacionHtml += `
+          <li class="page-item ${i === currentPage ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="event.preventDefault(); cargarOrdenes(${i})">${i + 1}</a>
+          </li>
+        `;
+      }
+      
+      paginacionHtml += `
+            <li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
+              <a class="page-link" href="#" onclick="event.preventDefault(); cargarOrdenes(${currentPage + 1})">Siguiente</a>
+            </li>
+          </ul>
+        </nav>
+      `;
+      
+      document.getElementById('paginacionOrdenes').innerHTML = paginacionHtml;
+    }
+    
+    // Ver detalle de una orden
+    async function verDetalleOrden(ordenId) {
+      const adminEmail = sessionStorage.getItem('adminEmail');
+      const adminPassword = sessionStorage.getItem('adminPassword');
+      
+      try {
+        const response = await fetch(`/api/admin/ordenes/${ordenId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ adminEmail, adminPassword })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            mostrarDetalleOrden(data.orden);
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al cargar detalle', 'error');
+      }
+    }
+    
+    // Mostrar modal con detalle de orden
+    function mostrarDetalleOrden(orden) {
+      const detallesHtml = orden.detalles ? orden.detalles.map(d => `
+        <tr>
+          <td>${d.nombrePlan}</td>
+          <td>${d.cantidad}</td>
+          <td>$${parseFloat(d.precioUnitario).toFixed(2)}</td>
+          <td>$${parseFloat(d.subtotal).toFixed(2)}</td>
+        </tr>
+      `).join('') : '';
+      
+      const pagosHtml = orden.pagos ? orden.pagos.map(p => `
+        <div class="card mb-2">
+          <div class="card-body py-2">
+            <div class="row">
+              <div class="col-md-6">
+                <small><strong>Método:</strong> ${p.metodoPago}</small>
+              </div>
+              <div class="col-md-6">
+                <small><strong>Estado:</strong> ${getBadgeEstado(p.estado)}</small>
+              </div>
+              <div class="col-md-6">
+                <small><strong>Monto:</strong> $${parseFloat(p.monto).toFixed(2)}</small>
+              </div>
+              <div class="col-md-6">
+                <small><strong>Ref:</strong> ${p.referenciaPago || 'N/A'}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('') : '<p class="text-muted">Sin pagos registrados</p>';
+      
+      Swal.fire({
+        title: `Orden ${orden.numeroOrden}`,
+        html: `
+          <div class="text-start">
+            <h6 class="border-bottom pb-2">Información General</h6>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p class="mb-1"><strong>Cliente:</strong> ${orden.nombreCliente}</p>
+                <p class="mb-1"><strong>Email:</strong> ${orden.emailCliente}</p>
+                <p class="mb-1"><strong>Teléfono:</strong> ${orden.telefonoCliente || 'N/A'}</p>
+              </div>
+              <div class="col-md-6">
+                <p class="mb-1"><strong>Estado:</strong> ${getBadgeEstado(orden.estado)}</p>
+                <p class="mb-1"><strong>Total:</strong> $${parseFloat(orden.total).toFixed(2)}</p>
+                <p class="mb-1"><strong>Fecha:</strong> ${formatearFecha(orden.fechaCreacion)}</p>
+              </div>
+            </div>
+            
+            <h6 class="border-bottom pb-2">Detalles de la Orden</h6>
+            <table class="table table-sm mb-3">
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Cant.</th>
+                  <th>Precio</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${detallesHtml}
+              </tbody>
+            </table>
+            
+            <h6 class="border-bottom pb-2">Pagos</h6>
+            ${pagosHtml}
+            
+            ${orden.notas ? `
+              <h6 class="border-bottom pb-2">Notas</h6>
+              <p class="text-muted">${orden.notas}</p>
+            ` : ''}
+          </div>
+        `,
+        icon: 'info',
+        width: '800px',
+        confirmButtonText: 'Cerrar',
+        customClass: {
+          confirmButton: 'btn btn-primary'
+        }
+      });
+    }
+    
+    // Cambiar estado de una orden
+    async function cambiarEstadoOrden(ordenId, estadoActual) {
+      const estados = [
+        'PENDIENTE',
+        'PAGADO',
+        'EN_PROCESO',
+        'COMPLETADO',
+        'CANCELADO',
+        'REEMBOLSADO'
+      ];
+      
+      const opcionesHtml = estados.map(e => 
+        `<option value="${e}" ${e === estadoActual ? 'selected' : ''}>${e}</option>`
+      ).join('');
+      
+      const { value: nuevoEstado } = await Swal.fire({
+        title: 'Cambiar Estado de la Orden',
+        html: `
+          <div class="text-start">
+            <p>Selecciona el nuevo estado:</p>
+            <select id="nuevoEstado" class="form-select">
+              ${opcionesHtml}
+            </select>
+          </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Actualizar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-secondary'
+        },
+        preConfirm: () => {
+          return document.getElementById('nuevoEstado').value;
+        }
+      });
+      
+      if (!nuevoEstado || nuevoEstado === estadoActual) {
+        return;
+      }
+      
+      const adminEmail = sessionStorage.getItem('adminEmail');
+      const adminPassword = sessionStorage.getItem('adminPassword');
+      
+      try {
+        const response = await fetch(`/api/admin/ordenes/${ordenId}/estado`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            adminEmail,
+            adminPassword,
+            nuevoEstado
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            showToast('Estado actualizado correctamente', 'success');
+            cargarOrdenes(currentPage); // Recargar la tabla
+          } else {
+            showToast(data.message || 'Error al actualizar', 'error');
+          }
+        } else {
+          showToast('Error al actualizar estado', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+      }
+    }
+    
+    // Cargar estadísticas
+    async function cargarEstadisticas() {
+      const adminEmail = sessionStorage.getItem('adminEmail');
+      const adminPassword = sessionStorage.getItem('adminPassword');
+      
+      const btn = document.getElementById('cargarEstadisticasBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Cargando...';
+      btn.disabled = true;
+      
+      try {
+        const response = await fetch('/api/admin/ordenes/estadisticas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            adminEmail,
+            adminPassword,
+            dias: diasSeleccionados
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            mostrarEstadisticas(data.estadisticas);
+            showToast('Estadísticas cargadas', 'success');
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al cargar estadísticas', 'error');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+    
+    // Mostrar estadísticas
+    function mostrarEstadisticas(stats) {
+      const html = `
+        <div class="row">
+          <div class="col-md-3">
+            <div class="card bg-primary text-white mb-3">
+              <div class="card-body">
+                <h3 class="mb-0">$${parseFloat(stats.totalVentas || 0).toFixed(2)}</h3>
+                <p class="mb-0"><small>Ventas Totales</small></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-success text-white mb-3">
+              <div class="card-body">
+                <h3 class="mb-0">$${parseFloat(stats.ventasPeriodo || 0).toFixed(2)}</h3>
+                <p class="mb-0"><small>Últimos ${stats.diasPeriodo} días</small></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-info text-white mb-3">
+              <div class="card-body">
+                <h3 class="mb-0">${stats.totalOrdenes || 0}</h3>
+                <p class="mb-0"><small>Total Órdenes</small></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-warning text-white mb-3">
+              <div class="card-body">
+                <h3 class="mb-0">$${parseFloat(stats.ticketPromedio || 0).toFixed(2)}</h3>
+                <p class="mb-0"><small>Ticket Promedio</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-3">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5>${stats.ordenesPendientes || 0}</h5>
+                <p class="mb-0 text-muted">Pendientes</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5>${stats.ordenesPagadas || 0}</h5>
+                <p class="mb-0 text-muted">Pagadas</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5>${stats.ordenesCompletadas || 0}</h5>
+                <p class="mb-0 text-muted">Completadas</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5>${stats.ordenesCanceladas || 0}</h5>
+                <p class="mb-0 text-muted">Canceladas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('estadisticasContainer').innerHTML = html;
+    }
+    
+    // Utilidades
+    function getBadgeEstado(estado) {
+      const colores = {
+        'PENDIENTE': 'warning',
+        'PAGADO': 'success',
+        'EN_PROCESO': 'info',
+        'COMPLETADO': 'primary',
+        'CANCELADO': 'danger',
+        'REEMBOLSADO': 'secondary'
+      };
+      
+      return `<span class="badge bg-${colores[estado] || 'secondary'}">${estado}</span>`;
+    }
+    
+    function formatearFecha(fecha) {
+      if (!fecha) return 'N/A';
+      const date = new Date(fecha);
+      return date.toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+    
+    // Event listeners para órdenes
+    document.getElementById('cargarOrdenesBtn').addEventListener('click', () => cargarOrdenes(0));
+    document.getElementById('buscarOrdenesBtn').addEventListener('click', () => cargarOrdenes(0));
+    document.getElementById('limpiarFiltrosBtn').addEventListener('click', function() {
+      document.getElementById('filtroNumeroOrden').value = '';
+      document.getElementById('filtroEstado').value = '';
+      document.getElementById('filtroEmailCliente').value = '';
+      cargarOrdenes(0);
+    });
+    
+    // Event listeners para estadísticas
+    document.getElementById('cargarEstadisticasBtn').addEventListener('click', cargarEstadisticas);
+    
+    document.querySelectorAll('[data-dias]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('[data-dias]').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        diasSeleccionados = parseInt(this.getAttribute('data-dias'));
+      });
     });
   </script>
 </body>

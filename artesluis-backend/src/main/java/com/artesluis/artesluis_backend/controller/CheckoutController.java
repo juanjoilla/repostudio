@@ -62,6 +62,7 @@ public class CheckoutController {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         model.addAttribute("usuario", usuarioLogueado);
+        model.addAttribute("usuarioLogueado", true);
         model.addAttribute("itemsCarrito", itemsCarrito);
         model.addAttribute("subtotal", subtotal);
         model.addAttribute("total", subtotal); // Por ahora sin impuestos o descuentos
@@ -130,8 +131,17 @@ public class CheckoutController {
                 redirectAttributes.addFlashAttribute("tipoMensaje", "info");
                 return "redirect:/checkout/confirmacion/" + orden.getId();
             } else {
+                // Construir mensaje de error desde gatewayResponse o notas
+                String mensajeError = pago.getRespuestaGateway();
+                if (mensajeError == null || mensajeError.trim().isEmpty()) {
+                    mensajeError = pago.getNotas();
+                }
+                if (mensajeError == null || mensajeError.trim().isEmpty()) {
+                    mensajeError = "Error desconocido al procesar el pago";
+                }
+                
                 redirectAttributes.addFlashAttribute("mensaje", 
-                    "Error en el procesamiento del pago: " + pago.getRespuestaGateway());
+                    "Error en el procesamiento del pago: " + mensajeError);
                 redirectAttributes.addFlashAttribute("tipoMensaje", "error");
                 return "redirect:/checkout";
             }
@@ -149,6 +159,35 @@ public class CheckoutController {
                 "Error al procesar la orden: " + e.getMessage());
             redirectAttributes.addFlashAttribute("tipoMensaje", "error");
             return "redirect:/checkout";
+        }
+    }
+    
+    /**
+     * Muestra todas las órdenes del usuario logueado
+     */
+    @GetMapping("/mis-ordenes")
+    public String misOrdenes(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuario");
+        
+        if (usuarioLogueado == null) {
+            redirectAttributes.addFlashAttribute("mensaje", "Debe iniciar sesión para ver sus órdenes");
+            redirectAttributes.addFlashAttribute("tipoMensaje", "warning");
+            return "redirect:/login";
+        }
+        
+        try {
+            List<Orden> ordenes = ordenService.obtenerOrdenesPorUsuario(usuarioLogueado);
+            model.addAttribute("usuario", usuarioLogueado);
+            model.addAttribute("usuarioLogueado", true);
+            model.addAttribute("ordenes", ordenes);
+            
+            return "mis-ordenes";
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensaje", 
+                "Error al cargar las órdenes: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("tipoMensaje", "error");
+            return "redirect:/";
         }
     }
     
@@ -198,6 +237,7 @@ public class CheckoutController {
             model.addAttribute("orden", orden);
             model.addAttribute("pagos", pagos);
             model.addAttribute("usuario", usuarioLogueado);
+            model.addAttribute("usuarioLogueado", true);
             
             return "checkout-confirmacion";
             

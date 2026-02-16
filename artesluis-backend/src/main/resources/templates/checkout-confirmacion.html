@@ -10,7 +10,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/">
                 <i class="fas fa-palette me-2"></i>ArtesLuis
@@ -27,7 +27,7 @@
                         <li><a class="dropdown-item" href="/perfil">
                             <i class="fas fa-user-circle me-2"></i>Mi Perfil
                         </a></li>
-                        <li><a class="dropdown-item" href="/mis-ordenes">
+                        <li><a class="dropdown-item" href="/checkout/mis-ordenes">
                             <i class="fas fa-shopping-bag me-2"></i>Mis Órdenes
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -233,6 +233,47 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Información importante sobre comunicación -->
+                        <div class="alert alert-warning mt-3">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Información Importante
+                            </h6>
+                            <p class="mb-2">
+                                <strong>Todo el traspaso de información y coordinación de tu orden será mediante WhatsApp.</strong>
+                            </p>
+                            <p class="mb-0">
+                                Por favor, comunícate con nosotros para coordinar los detalles de tu proyecto.
+                            </p>
+                        </div>
+                        
+                        <!-- Contacto WhatsApp -->
+                        <div class="alert alert-success mt-3">
+                            <h6 class="alert-heading">
+                                <i class="fab fa-whatsapp me-2"></i>Contáctanos por WhatsApp
+                            </h6>
+                            <p class="mb-3">
+                                Para coordinar los detalles de tu orden 
+                                <strong th:text="${orden.numeroOrden}">ORD-001</strong>, 
+                                escríbenos directamente:
+                            </p>
+                            <div class="text-center">
+                                <a href="https://wa.me/51987581179?text=Hola,%20quiero%20coordinar%20los%20detalles%20de%20mi%20orden%20" 
+                                   th:href="@{https://wa.me/51987581179(text='Hola, quiero coordinar los detalles de mi orden ' + ${orden.numeroOrden})}"
+                                   class="btn btn-success btn-lg" 
+                                   target="_blank"
+                                   rel="noopener noreferrer">
+                                    <i class="fab fa-whatsapp me-2"></i>
+                                    Chatear por WhatsApp: +51 987 581 179
+                                </a>
+                            </div>
+                            <p class="text-muted text-center mt-2 mb-0">
+                                <small>
+                                    <i class="fas fa-clock me-1"></i>
+                                    Horario de atención: Lunes a Viernes de 9:00 AM a 6:00 PM
+                                </small>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -241,7 +282,7 @@
                     <a href="/" class="btn btn-primary me-3">
                         <i class="fas fa-home me-2"></i>Volver al Inicio
                     </a>
-                    <a href="/mis-ordenes" class="btn btn-outline-primary">
+                    <a href="/checkout/mis-ordenes" class="btn btn-outline-primary">
                         <i class="fas fa-list me-2"></i>Ver Mis Órdenes
                     </a>
                 </div>

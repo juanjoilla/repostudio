@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de Planes - Artes Luis Studio</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons - con fallback -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
+        integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" 
+        integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <link rel="stylesheet" th:href="@{/css/login.css}" />
+  
+  <style>
+    .admin-body {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .admin-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      border: 1px solid rgba(52, 152, 219, 0.1);
+    }
+    
+    .admin-header {
+      background: linear-gradient(45deg, #3498db, #2980b9);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="admin-body">
+  <div class="admin-container">
+    <div class="container">
+      <div class="admin-card">
+        
+        <!-- Header -->
+        <div class="admin-header">
+          <h1 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Panel de Administración</h1>
+          <p class="mb-0 mt-2">Artes Luis Studio</p>
+        </div>
+
+        <!-- Panel de administración -->
+        <div id="adminPanel" class="p-4">
+          
+          <!-- Dashboard Header -->
+          <div class="row mb-4">
+            <div class="col-md-8">
+              <h3><i class="bi bi-box me-2"></i>Gestión de Planes</h3>
+              <p class="text-muted mb-0">Administra los planes de servicio</p>
+            </div>
+            <div class="col-md-4 text-end">
+              <button id="logoutBtn" class="btn btn-outline-danger">
+                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs de navegación -->
+          <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="/admin/ventas">
+                <i class="bi bi-chart-line me-2"></i>Dashboard Ventas
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="/admin/ventas/ordenes">
+                <i class="bi bi-cart-check-fill me-2"></i>Todas las Órdenes
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" href="/admin">
+                <i class="bi bi-people-fill me-2"></i>Gestión Usuarios
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active">
+                <i class="bi bi-box me-2"></i>Gestión Planes
+              </a>
+            </li>
+          </ul>
+
+          <!-- Botón agregar plan -->
+          <div class="mb-4">
+            <button class="btn btn-primary" id="btnNuevoPlan">
+              <i class="bi bi-plus-circle me-2"></i>Nuevo Plan
+            </button>
+          </div>
+
+          <!-- Lista de planes -->
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Precio</th>
+                      <th>Revisiones</th>
+                      <th>Recomendado</th>
+                      <th>Activo</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tablaPlanes">
+                    <tr th:each="plan : ${planes}">
+                      <td th:text="${plan.id}">1</td>
+                      <td th:text="${plan.nombre}">Plan Básico</td>
+                      <td th:text="${'$' + plan.precio}">$99.00</td>
+                      <td th:text="${plan.numeroRevisiones == -1 ? 'Ilimitadas' : plan.numeroRevisiones}">3</td>
+                      <td>
+                        <span th:if="${plan.esRecomendado}" class="badge bg-warning">
+                          <i class="bi bi-star-fill"></i> Recomendado
+                        </span>
+                      </td>
+                      <td>
+                        <span th:class="${plan.estaActivo ? 'badge bg-success' : 'badge bg-secondary'}"
+                              th:text="${plan.estaActivo ? 'Activo' : 'Inactivo'}">Activo</span>
+                      </td>
+                      <td>
+                        <button class="btn btn-sm btn-primary" 
+                                th:data-plan-id="${plan.id}"
+                                onclick="editarPlan(this.getAttribute('data-plan-id'))">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" 
+                                th:data-plan-id="${plan.id}"
+                                th:data-plan-nombre="${plan.nombre}"
+                                onclick="eliminarPlan(this.getAttribute('data-plan-id'), this.getAttribute('data-plan-nombre'))">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para crear/editar plan -->
+  <div class="modal fade" id="modalPlan" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPlanTitle">Nuevo Plan</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formPlan">
+            <input type="hidden" id="planId">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="nombre" class="form-label">Nombre del Plan</label>
+                <input type="text" class="form-control" id="nombre" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="precio" class="form-label">Precio</label>
+                <input type="number" step="0.01" class="form-control" id="precio" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="numeroRevisiones" class="form-label">Número de Revisiones</label>
+                <input type="number" class="form-control" id="numeroRevisiones" required>
+                <small class="text-muted">-1 para ilimitadas</small>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="colorBadge" class="form-label">Color Badge</label>
+                <select class="form-select" id="colorBadge">
+                  <option value="primary">Azul</option>
+                  <option value="success">Verde</option>
+                  <option value="warning">Amarillo</option>
+                  <option value="danger">Rojo</option>
+                  <option value="info">Cian</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea class="form-control" id="descripcion" rows="2" maxlength="500"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="archivosIncluidos" class="form-label">Archivos Incluidos</label>
+              <input type="text" class="form-control" id="archivosIncluidos" maxlength="1000">
+            </div>
+            <div class="mb-3">
+              <label for="caracteristicas" class="form-label">Características (separadas por ;)</label>
+              <textarea class="form-control" id="caracteristicas" rows="3" maxlength="2000"></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="esRecomendado">
+                  <label class="form-check-label" for="esRecomendado">
+                    Plan Recomendado
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="estaActivo" checked>
+                  <label class="form-check-label" for="estaActivo">
+                    Plan Activo
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnGuardarPlan">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <script>
+    let modalPlan;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      modalPlan = new bootstrap.Modal(document.getElementById('modalPlan'));
+    });
+    
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      window.location.href = '/logout';
+    });
+    
+    // Nuevo plan
+    document.getElementById('btnNuevoPlan').addEventListener('click', function() {
+      document.getElementById('modalPlanTitle').textContent = 'Nuevo Plan';
+      document.getElementById('formPlan').reset();
+      document.getElementById('planId').value = '';
+      document.getElementById('estaActivo').checked = true;
+      modalPlan.show();
+    });
+    
+    // Guardar plan
+    document.getElementById('btnGuardarPlan').addEventListener('click', async function() {
+      const planId = document.getElementById('planId').value;
+      const data = {
+        nombre: document.getElementById('nombre').value,
+        precio: parseFloat(document.getElementById('precio').value),
+        descripcion: document.getElementById('descripcion').value,
+        numeroRevisiones: parseInt(document.getElementById('numeroRevisiones').value),
+        archivosIncluidos: document.getElementById('archivosIncluidos').value,
+        caracteristicas: document.getElementById('caracteristicas').value,
+        esRecomendado: document.getElementById('esRecomendado').checked,
+        estaActivo: document.getElementById('estaActivo').checked,
+        colorBadge: document.getElementById('colorBadge').value
+      };
+      
+      try {
+        const url = planId ? `/api/planes/${planId}` : '/api/planes';
+        const method = planId ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          Swal.fire('Éxito', 'Plan guardado correctamente', 'success').then(() => {
+            location.reload();
+          });
+        } else {
+          throw new Error('Error al guardar el plan');
+        }
+      } catch (error) {
+        Swal.fire('Error', error.message, 'error');
+      }
+    });
+    
+    // Editar plan
+    async function editarPlan(id) {
+      try {
+        const response = await fetch(`/api/planes/${id}`);
+        if (response.ok) {
+          const plan = await response.json();
+          document.getElementById('modalPlanTitle').textContent = 'Editar Plan';
+          document.getElementById('planId').value = plan.id;
+          document.getElementById('nombre').value = plan.nombre;
+          document.getElementById('precio').value = plan.precio;
+          document.getElementById('descripcion').value = plan.descripcion || '';
+          document.getElementById('numeroRevisiones').value = plan.numeroRevisiones;
+          document.getElementById('archivosIncluidos').value = plan.archivosIncluidos || '';
+          document.getElementById('caracteristicas').value = plan.caracteristicas || '';
+          document.getElementById('esRecomendado').checked = plan.esRecomendado;
+          document.getElementById('estaActivo').checked = plan.estaActivo;
+          document.getElementById('colorBadge').value = plan.colorBadge || 'primary';
+          modalPlan.show();
+        }
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo cargar el plan', 'error');
+      }
+    }
+    
+    // Eliminar plan
+    async function eliminarPlan(id, nombre) {
+      const result = await Swal.fire({
+        title: '¿Eliminar plan?',
+        text: `¿Estás seguro de eliminar "${nombre}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      });
+      
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`/api/planes/${id}`, { method: 'DELETE' });
+          if (response.ok) {
+            Swal.fire('Eliminado', 'Plan eliminado correctamente', 'success').then(() => {
+              location.reload();
+            });
+          } else {
+            throw new Error('Error al eliminar el plan');
+          }
+        } catch (error) {
+          Swal.fire('Error', error.message, 'error');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

@@ -31,7 +31,9 @@ public class PlanController {
         model.addAttribute("planes", planes);
         
         // Verificar si el usuario está logueado
-        boolean usuarioLogueado = session.getAttribute("usuario") != null;
+        Object usuario = session.getAttribute("usuario");
+        boolean usuarioLogueado = usuario != null;
+        model.addAttribute("usuario", usuario);
         model.addAttribute("usuarioLogueado", usuarioLogueado);
         
         // Contar items en el carrito para mostrar en la interfaz (solo si está logueado)

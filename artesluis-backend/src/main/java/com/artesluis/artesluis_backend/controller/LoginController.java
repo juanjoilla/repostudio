@@ -71,7 +71,7 @@ public class LoginController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/";
+        return "redirect:/login";
     }
     
     // Método simple para simular login (solo para pruebas)

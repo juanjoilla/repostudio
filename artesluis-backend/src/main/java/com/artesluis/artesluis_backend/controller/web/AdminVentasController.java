@@ -63,6 +63,12 @@ public class AdminVentasController {
             BigDecimal ventasPeriodo = ordenService.obtenerTotalVentasPorPeriodo(fechaInicio, fechaFin);
             Long ordenesPeriodo = ordenService.contarOrdenesPorPeriodo(fechaInicio, fechaFin);
             
+            // Calcular ticket promedio
+            BigDecimal ticketPromedio = BigDecimal.ZERO;
+            if (totalOrdenes != null && totalOrdenes > 0 && totalVentas != null) {
+                ticketPromedio = totalVentas.divide(new BigDecimal(totalOrdenes), 2, BigDecimal.ROUND_HALF_UP);
+            }
+            
             // Órdenes recientes
             Pageable pageable = PageRequest.of(0, 10);
             Page<Orden> ordenesRecientes = ordenService.obtenerTodasLasOrdenes(pageable);
@@ -73,6 +79,7 @@ public class AdminVentasController {
             model.addAttribute("ordenesPagadas", ordenesPagadas);
             model.addAttribute("ordenesCompletadas", ordenesCompletadas);
             model.addAttribute("totalVentas", totalVentas);
+            model.addAttribute("ticketPromedio", ticketPromedio);
             model.addAttribute("ventasPeriodo", ventasPeriodo);
             model.addAttribute("ordenesPeriodo", ordenesPeriodo);
             model.addAttribute("diasPeriodo", diasPeriodo);

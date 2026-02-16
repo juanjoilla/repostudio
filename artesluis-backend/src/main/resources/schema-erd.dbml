@@ -1,0 +1,194 @@
+// =====================================================
+// SCHEMA DBML PARA DIAGRAMA ERD - ARTESLUIS BACKEND
+// Formato: DBML (Database Markup Language)
+// Herramienta recomendada: https://dbdiagram.io
+// =====================================================
+// Instrucciones:
+// 1. Copiar todo el contenido de este archivo
+// 2. Ir a https://dbdiagram.io/d
+// 3. Pegar el contenido en el editor
+// 4. El diagrama se generará automáticamente
+// =====================================================
+
+Project artesluis_backend {
+  database_type: 'PostgreSQL'
+  Note: 'Sistema de gestión de ventas y servicios de diseño - ArtesLuis'
+}
+
+// Tabla de Roles
+Table roles {
+  id bigserial [pk, increment]
+  nombre varchar(255) [not null, unique, note: 'ADMIN, CLIENTE, ARTISTA, MODERADOR']
+  
+  Note: 'Catálogo de roles de usuario'
+}
+
+// Tabla de Usuarios
+Table usuarios {
+  id bigserial [pk, increment]
+  nombre varchar(255)
+  correo varchar(255) [note: 'Email del usuario']
+  password varchar(255) [note: 'Contraseña encriptada']
+  imagen_url varchar(255) [note: 'URL de la foto de perfil']
+  rol_id bigint [not null, ref: > roles.id]
+  
+  Note: 'Usuarios registrados en la plataforma'
+}
+
+// Tabla de Planes de Servicio
+Table planes {
+  id bigserial [pk, increment]
+  nombre varchar(255) [not null, note: 'Básico, Profesional, Premium']
+  precio decimal(10,2) [not null]
+  descripcion varchar(500)
+  numero_revisiones integer [note: '-1 para ilimitadas']
+  archivos_incluidos varchar(1000)
+  caracteristicas varchar(2000) [note: 'Separadas por punto y coma']
+  es_recomendado boolean [default: false]
+  color_badge varchar(50) [default: 'primary']
+  esta_activo boolean [default: true]
+  
+  Note: 'Planes de servicio de diseño disponibles'
+}
+
+// Tabla de Bancos
+Table bancos {
+  id bigserial [pk, increment]
+  codigo varchar(255) [not null, unique, note: 'Código bancario']
+  nombre varchar(255) [not null]
+  nombre_corto varchar(255)
+  logo_url varchar(255)
+  esta_activo boolean [default: true]
+  tipo_banco varchar(50) [note: 'COMERCIAL, COOPERATIVO, DIGITAL, INTERNACIONAL']
+  
+  Note: 'Catálogo de bancos para transferencias'
+}
+
+// Tabla de Carritos
+Table carritos {
+  id bigserial [pk, increment]
+  session_id varchar(255) [not null, note: 'ID de sesión del navegador']
+  fecha_creacion timestamp
+  fecha_actualizacion timestamp
+  
+  Note: 'Carritos de compra por sesión'
+}
+
+// Tabla de Items del Carrito
+Table items_carrito {
+  id bigserial [pk, increment]
+  carrito_id bigint [not null, ref: > carritos.id]
+  plan_id bigint [not null, ref: > planes.id]
+  cantidad integer [not null]
+  precio_unitario decimal(10,2) [not null]
+  
+  Note: 'Items agregados al carrito'
+}
+
+// Tabla de Órdenes
+Table ordenes {
+  id bigserial [pk, increment]
+  numero_orden varchar(255) [unique, not null, note: 'ORD-{timestamp}']
+  usuario_id bigint [not null, ref: > usuarios.id]
+  total decimal(10,2) [not null]
+  subtotal decimal(10,2) [not null]
+  descuento decimal(10,2) [default: 0]
+  estado varchar(50) [note: 'PENDIENTE, PAGADO, EN_PROCESO, COMPLETADO, CANCELADO, REEMBOLSADO']
+  fecha_creacion timestamp
+  fecha_actualizacion timestamp
+  email_cliente varchar(255)
+  telefono_cliente varchar(255)
+  nombre_cliente varchar(255)
+  notas text
+  
+  Indexes {
+    numero_orden [unique]
+    usuario_id
+    estado
+  }
+  
+  Note: 'Órdenes de compra generadas'
+}
+
+// Tabla de Detalles de Orden
+Table detalles_orden {
+  id bigserial [pk, increment]
+  orden_id bigint [not null, ref: > ordenes.id]
+  plan_id bigint [not null, ref: > planes.id]
+  cantidad integer [not null]
+  precio_unitario decimal(10,2) [not null]
+  descuento_unitario decimal(10,2) [default: 0]
+  nombre_plan varchar(255) [note: 'Snapshot del nombre del plan']
+  descripcion_plan varchar(1000) [note: 'Snapshot de la descripción']
+  
+  Indexes {
+    orden_id
+  }
+  
+  Note: 'Líneas de detalle de cada orden'
+}
+
+// Tabla de Pagos
+Table pagos {
+  id bigserial [pk, increment]
+  orden_id bigint [not null, ref: > ordenes.id]
+  referencia_pago varchar(255) [unique, note: 'PAY-{timestamp}']
+  monto decimal(10,2) [not null]
+  metodo_pago varchar(50) [note: 'TARJETA_CREDITO, PAYPAL, TRANSFERENCIA_BANCARIA, etc.']
+  estado varchar(50) [note: 'PENDIENTE, PROCESANDO, COMPLETADO, FALLIDO, CANCELADO, REEMBOLSADO']
+  fecha_pago timestamp
+  fecha_creacion timestamp
+  fecha_actualizacion timestamp
+  
+  // Información de gateway
+  gateway_transaction_id varchar(255)
+  gateway_response varchar(1000)
+  gateway_status varchar(255)
+  
+  // Información de tarjeta
+  numero_tarjeta_ultimos_4 varchar(4)
+  tipo_tarjeta varchar(50)
+  nombre_tarjetahabiente varchar(255)
+  
+  // Información de transferencia
+  banco_id bigint [ref: > bancos.id]
+  numero_cuenta_origen varchar(255)
+  numero_referencia_transferencia varchar(255)
+  
+  notas text
+  
+  Indexes {
+    orden_id
+    estado
+  }
+  
+  Note: 'Pagos realizados asociados a órdenes'
+}
+
+// =====================================================
+// RELACIONES PRINCIPALES
+// =====================================================
+
+// Un rol puede tener muchos usuarios
+Ref: roles.id < usuarios.rol_id
+
+// Un carrito puede tener muchos items
+Ref: carritos.id < items_carrito.carrito_id
+
+// Un plan puede estar en muchos items de carrito
+Ref: planes.id < items_carrito.plan_id
+
+// Un usuario puede tener muchas órdenes
+Ref: usuarios.id < ordenes.usuario_id
+
+// Una orden puede tener muchos detalles
+Ref: ordenes.id < detalles_orden.orden_id
+
+// Un plan puede estar en muchos detalles de orden
+Ref: planes.id < detalles_orden.plan_id
+
+// Una orden puede tener muchos pagos
+Ref: ordenes.id < pagos.orden_id
+
+// Un banco puede estar en muchos pagos (opcional)
+Ref: bancos.id < pagos.banco_id

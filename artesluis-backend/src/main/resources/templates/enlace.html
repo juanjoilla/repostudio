@@ -34,11 +34,31 @@
           <li class="nav-item"><a class="nav-link" th:href="@{/portafolio}">Portafolio</a></li>
           <li class="nav-item"><a class="nav-link" th:href="@{/contacto}">Contacto</a></li>
           <li class="nav-item"><a class="nav-link active" th:href="@{/enlace}">Enlaces</a></li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/login}">Login</a></li>
-          <li class="nav-item" th:if="${usuarioLogueado}">
-            <a class="nav-link" th:href="@{/planes/carrito}">
-              <i class="fas fa-shopping-cart"></i>
+          <!-- Mostrar Login solo si NO está logueado -->
+          <li class="nav-item" th:unless="${usuarioLogueado}">
+            <a class="nav-link" th:href="@{/login}">
+              <i class="fas fa-sign-in-alt"></i> Login
             </a>
+          </li>
+          <!-- Mostrar carrito y usuario si está logueado -->
+          <li class="nav-item" th:if="${usuarioLogueado}">
+            <a class="nav-link" th:href="@{/planes/carrito}" id="carrito-link">
+              <i class="fas fa-shopping-cart"></i> 
+              <span class="badge bg-danger" th:text="${itemsEnCarrito}" th:if="${itemsEnCarrito > 0}" id="cart-badge">0</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown" th:if="${usuarioLogueado}">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i> 
+              <span th:text="${session.usuario != null ? session.usuario.nombre : 'Usuario'}">Usuario</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" th:href="@{/perfil}"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+              <li><a class="dropdown-item" th:href="@{/checkout/mis-ordenes}"><i class="fas fa-shopping-bag"></i> Mis Órdenes</a></li>
+              <li><a class="dropdown-item" th:href="@{/planes/carrito}"><i class="fas fa-shopping-cart"></i> Mi Carrito</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
           </li>
         </ul>
       </div>

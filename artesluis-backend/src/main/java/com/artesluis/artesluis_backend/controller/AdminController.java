@@ -1,15 +1,18 @@
 package com.artesluis.artesluis_backend.controller;
 
-import com.artesluis.artesluis_backend.model.Usuario;
-import com.artesluis.artesluis_backend.service.UsuarioService;
+import com.artesluis.artesluis_backend.model.*;
+import com.artesluis.artesluis_backend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -18,6 +21,36 @@ public class AdminController {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private OrdenService ordenService;
+    
+    @Autowired
+    private PagoService pagoService;
+
+    // Cargar usuarios automáticamente usando sesión
+    @GetMapping("/usuarios/auto")
+    public ResponseEntity<List<Map<String, Object>>> listarUsuariosAuto() {
+        try {
+            List<Usuario> usuarios = usuarioService.listarUsuarios();
+            List<Map<String, Object>> usuariosSeguros = usuarios.stream()
+                .map(u -> {
+                    Map<String, Object> usuarioMap = new HashMap<>();
+                    usuarioMap.put("id", u.getId());
+                    usuarioMap.put("nombre", u.getNombre());
+                    usuarioMap.put("correo", u.getCorreo());
+                    usuarioMap.put("imagenUrl", u.getImagenUrl() != null ? u.getImagenUrl() : "");
+                    usuarioMap.put("rol", u.getRol().getNombre());
+                    return usuarioMap;
+                })
+                .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(usuariosSeguros);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
+        }
+    }
 
     // Listar todos los usuarios - SOLO PARA ADMINISTRADORES
     @PostMapping("/usuarios")
