@@ -44,12 +44,12 @@
           </small>
         </div>
         <div class="mt-2">
-          <a href="/demo-login?correo=maria@ejemplo.com" class="btn btn-sm btn-outline-primary">
+          <button onclick="demoLogin('maria@ejemplo.com', 'cliente123')" class="btn btn-sm btn-outline-primary">
             Login Rápido Cliente
-          </a>
-          <a href="/demo-login?correo=admin@artesluis.com" class="btn btn-sm btn-outline-secondary">
+          </button>
+          <button onclick="demoLogin('admin@artesluis.com', 'admin123')" class="btn btn-sm btn-outline-secondary">
             Login Rápido Admin
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -88,6 +88,10 @@
             messageElement.style.color = 'green';
             messageElement.textContent = data.message;
             
+            // Guardar credenciales en sessionStorage para operaciones de admin
+            sessionStorage.setItem('adminEmail', correo);
+            sessionStorage.setItem('adminPassword', password);
+            
             // Redirigir después de un breve delay
             setTimeout(() => {
               window.location.href = data.redirectUrl;
@@ -109,6 +113,13 @@
         });
       });
     });
+    
+    // Función para login rápido de demo
+    function demoLogin(correo, password) {
+      document.getElementById('correo').value = correo;
+      document.getElementById('password').value = password;
+      document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+    }
   </script>
 </body>
 </html>

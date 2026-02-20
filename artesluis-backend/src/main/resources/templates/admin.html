@@ -406,20 +406,16 @@
     
     // Cargar usuarios
     document.getElementById('loadUsersBtn').addEventListener('click', async function() {
-      const adminEmail = sessionStorage.getItem('adminEmail');
-      const adminPassword = sessionStorage.getItem('adminPassword');
-      
       // Loading state
       this.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Cargando...';
       this.disabled = true;
       
       try {
-        const response = await fetch('/api/admin/usuarios', {
-          method: 'POST',
+        const response = await fetch('/api/admin/usuarios/auto', {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ adminEmail, adminPassword })
+          }
         });
         
         if (response.ok) {
@@ -713,6 +709,10 @@
       });
       
       if (result.isConfirmed) {
+        // Limpiar sessionStorage
+        sessionStorage.removeItem('adminEmail');
+        sessionStorage.removeItem('adminPassword');
+        
         // Redirigir a logout del servidor
         window.location.href = '/logout';
       }
