@@ -148,14 +148,6 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="info-card">
-                <div class="info-label">Método de Pago</div>
-                <div class="info-value" th:text="${orden.metodoPago != null ? orden.metodoPago.toString() : 'N/A'}">
-                  TRANSFERENCIA
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Cliente -->
@@ -167,19 +159,19 @@
               <div class="row">
                 <div class="col-md-4">
                   <div class="info-label">Nombre</div>
-                  <div class="info-value" th:text="${orden.usuario != null ? orden.usuario.nombre : 'N/A'}">
+                  <div class="info-value" th:text="${orden.nombreCliente != null ? orden.nombreCliente : 'N/A'}">
                     Juan Pérez
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="info-label">Correo</div>
-                  <div class="info-value" th:text="${orden.usuario != null ? orden.usuario.correo : 'N/A'}">
+                  <div class="info-value" th:text="${orden.emailCliente != null ? orden.emailCliente : 'N/A'}">
                     juan@ejemplo.com
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="info-label">Teléfono</div>
-                  <div class="info-value" th:text="${orden.telefono != null ? orden.telefono : 'N/A'}">
+                  <div class="info-value" th:text="${orden.telefonoCliente != null ? orden.telefonoCliente : 'N/A'}">
                     +51 999 999 999
                   </div>
                 </div>
