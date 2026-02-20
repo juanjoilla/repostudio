@@ -196,17 +196,17 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr th:each="item : ${orden.items}">
+                    <tr th:each="detalle : ${orden.detalles}">
                       <td>
-                        <strong th:text="${item.plan.nombre}">Plan Profesional</strong>
+                        <strong th:text="${detalle.nombrePlan != null ? detalle.nombrePlan : (detalle.plan != null ? detalle.plan.nombre : 'N/A')}">Plan Profesional</strong>
                         <br>
-                        <small class="text-muted" th:text="${item.plan.descripcion}">Descripción del plan</small>
+                        <small class="text-muted" th:text="${detalle.descripcionPlan != null ? detalle.descripcionPlan : (detalle.plan != null ? detalle.plan.descripcion : '')}">Descripción del plan</small>
                       </td>
-                      <td class="text-center" th:text="${item.cantidad}">1</td>
-                      <td class="text-end" th:text="'S/. ' + ${#numbers.formatDecimal(item.precioUnitario, 1, 2)}">
+                      <td class="text-center" th:text="${detalle.cantidad}">1</td>
+                      <td class="text-end" th:text="'S/. ' + ${#numbers.formatDecimal(detalle.precioUnitario, 1, 2)}">
                         S/. 199.00
                       </td>
-                      <td class="text-end" th:text="'S/. ' + ${#numbers.formatDecimal(item.cantidad * item.precioUnitario, 1, 2)}">
+                      <td class="text-end" th:text="'S/. ' + ${#numbers.formatDecimal(detalle.cantidad * detalle.precioUnitario, 1, 2)}">
                         S/. 199.00
                       </td>
                     </tr>
