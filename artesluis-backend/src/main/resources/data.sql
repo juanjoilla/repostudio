@@ -12,8 +12,8 @@ SELECT 'Admin ArteisLuis', 'admin@artesluis.com', 'admin123', NULL, 1
 WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE correo = 'admin@artesluis.com');
 
 INSERT INTO usuarios (nombre, correo, password, imagen_url, rol_id) 
-SELECT 'Carlos Pérez', 'carlos@empresa.com', 'carlos456', NULL, 2
-WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE correo = 'carlos@empresa.com');
+SELECT 'Juan Illatopa', 'Juan@utp.com', 'juan123', NULL, 2
+WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE correo = 'juan@utp.com');
 
 INSERT INTO usuarios (nombre, correo, password, imagen_url, rol_id) 
 SELECT 'María González', 'maria@ejemplo.com', 'cliente123', NULL, 2

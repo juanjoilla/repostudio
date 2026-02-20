@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title th:text="'Orden #' + ${orden.id} + ' - Artes Luis Studio'">Detalle Orden - Artes Luis Studio</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" 
+        integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" 
+        integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  
+  <style>
+    .admin-body {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .admin-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      border: 1px solid rgba(52, 152, 219, 0.1);
+    }
+    
+    .admin-header {
+      background: linear-gradient(45deg, #3498db, #2980b9);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .estado-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .estado-PENDIENTE { background: #ffc107; color: #000; }
+    .estado-COMPLETADA { background: #28a745; color: #fff; }
+    .estado-CANCELADA { background: #dc3545; color: #fff; }
+    .estado-PROCESANDO { background: #17a2b8; color: #fff; }
+    .estado-REEMBOLSADA { background: #6c757d; color: #fff; }
+
+    .info-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      border: 1px solid #e9ecef;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .info-label {
+      color: #6c757d;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      color: #212529;
+      font-size: 1.125rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body class="admin-body">
+  <div class="admin-container">
+    <div class="container py-4">
+      <div class="admin-card">
+        
+        <!-- Header -->
+        <div class="admin-header">
+          <h1 class="mb-0"><i class="bi bi-receipt me-2"></i>Detalle de Orden</h1>
+          <p class="mb-0 mt-2">Orden #<span th:text="${orden.id}">1</span></p>
+        </div>
+
+        <!-- Panel de administración -->
+        <div id="adminPanel" class="p-4">
+          
+          <!-- Navegación -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <a href="/admin/ventas/ordenes" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Volver a Órdenes
+              </a>
+            </div>
+            <div class="col-md-6 text-end">
+              <a href="/admin/ventas" class="btn btn-outline-primary me-2">
+                <i class="bi bi-chart-line me-2"></i>Dashboard
+              </a>
+              <a href="/admin" class="btn btn-outline-secondary">
+                <i class="bi bi-house me-2"></i>Inicio Admin
+              </a>
+            </div>
+          </div>
+
+          <!-- Mensajes de alerta -->
+          <div th:if="${mensaje}" class="alert alert-dismissible fade show" 
+               th:classappend="${tipoMensaje == 'success' ? 'alert-success' : (tipoMensaje == 'error' ? 'alert-danger' : 'alert-info')}" 
+               role="alert">
+            <i class="bi" 
+               th:classappend="${tipoMensaje == 'success' ? 'bi-check-circle-fill' : (tipoMensaje == 'error' ? 'bi-exclamation-triangle-fill' : 'bi-info-circle-fill')}"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+
+          <!-- Información general -->
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="info-card">
+                <div class="info-label">Estado</div>
+                <div>
+                  <span class="estado-badge" th:classappend="'estado-' + ${orden.estado.toString()}" 
+                        th:text="${orden.estado.toString()}">PENDIENTE</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-card">
+                <div class="info-label">Fecha</div>
+                <div class="info-value" th:text="${#temporals.format(orden.fechaCreacion, 'dd/MM/yyyy HH:mm')}">
+                  01/01/2024 10:00
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-card">
+                <div class="info-label">Total</div>
+                <div class="info-value text-success" th:text="'S/. ' + ${#numbers.formatDecimal(orden.total, 1, 2)}">
+                  S/. 199.00
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-card">
+                <div class="info-label">Método de Pago</div>
+                <div class="info-value" th:text="${orden.metodoPago != null ? orden.metodoPago.toString() : 'N/A'}">
+                  TRANSFERENCIA
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cliente -->
+          <div class="card mb-4 shadow-sm border-0">
+            <div class="card-header bg-light">
+              <h6 class="mb-0"><i class="bi bi-person-fill me-2"></i>Información del Cliente</h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="info-label">Nombre</div>
+                  <div class="info-value" th:text="${orden.usuario != null ? orden.usuario.nombre : 'N/A'}">
+                    Juan Pérez
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="info-label">Correo</div>
+                  <div class="info-value" th:text="${orden.usuario != null ? orden.usuario.correo : 'N/A'}">
+                    juan@ejemplo.com
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="info-label">Teléfono</div>
+                  <div class="info-value" th:text="${orden.telefono != null ? orden.telefono : 'N/A'}">
+                    +51 999 999 999
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Items de la orden -->
+          <div class="card mb-4 shadow-sm border-0">
+            <div class="card-header bg-light">
+              <h6 class="mb-0"><i class="bi bi-box-seam me-2"></i>Ítems de la Orden</h6>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Plan</th>
+                      <th class="text-center">Cantidad</th>
+                      <th class="text-end">Precio Unitario</th>
+                      <th class="text-end">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="item : ${orden.items}">
+                      <td>
+                        <strong th:text="${item.plan.nombre}">Plan Profesional</strong>
+                        <br>
+                        <small class="text-muted" th:text="${item.plan.descripcion}">Descripción del plan</small>
+                      </td>
+                      <td class="text-center" th:text="${item.cantidad}">1</td>
+                      <td class="text-end" th:text="'S/. ' + ${#numbers.formatDecimal(item.precioUnitario, 1, 2)}">
+                        S/. 199.00
+                      </td>
+                      <td class="text-end" th:text="'S/. ' + ${#numbers.formatDecimal(item.cantidad * item.precioUnitario, 1, 2)}">
+                        S/. 199.00
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot class="table-light">
+                    <tr>
+                      <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                      <td class="text-end">
+                        <strong class="text-success" th:text="'S/. ' + ${#numbers.formatDecimal(orden.total, 1, 2)}">
+                          S/. 199.00
+                        </strong>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagos -->
+          <div class="card mb-4 shadow-sm border-0">
+            <div class="card-header bg-light">
+              <h6 class="mb-0"><i class="bi bi-cash-stack me-2"></i>Historial de Pagos</h6>
+            </div>
+            <div class="card-body p-0">
+              <div th:if="${pagos != null and !pagos.isEmpty()}">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>ID Pago</th>
+                        <th>Fecha</th>
+                        <th>Método</th>
+                        <th class="text-end">Monto</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="pago : ${pagos}">
+                        <td th:text="${pago.id}">#1</td>
+                        <td th:text="${#temporals.format(pago.fechaCreacion, 'dd/MM/yyyy HH:mm')}">
+                          01/01/2024 10:00
+                        </td>
+                        <td th:text="${pago.metodoPago != null ? pago.metodoPago.toString() : 'N/A'}">
+                          TRANSFERENCIA
+                        </td>
+                        <td class="text-end" th:text="'S/. ' + ${#numbers.formatDecimal(pago.monto, 1, 2)}">
+                          S/. 199.00
+                        </td>
+                        <td>
+                          <span class="badge" 
+                                th:classappend="${pago.estado != null and pago.estado.toString() == 'COMPLETADO' ? 'bg-success' : (pago.estado != null and pago.estado.toString() == 'PENDIENTE' ? 'bg-warning text-dark' : 'bg-danger')}"
+                                th:text="${pago.estado != null ? pago.estado.toString() : 'N/A'}">
+                            COMPLETADO
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div th:if="${pagos == null or pagos.isEmpty()}" class="text-center py-4 text-muted">
+                <i class="bi bi-inbox display-4"></i>
+                <p class="mt-2">No hay pagos registrados para esta orden</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-light">
+              <h6 class="mb-0"><i class="bi bi-tools me-2"></i>Acciones</h6>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <!-- Actualizar estado -->
+                <div class="col-md-6">
+                  <form th:action="@{/admin/ventas/orden/{id}/actualizar-estado(id=${orden.id})}" 
+                        method="post" class="border rounded p-3 bg-light">
+                    <h6 class="mb-3"><i class="bi bi-arrow-repeat me-2"></i>Actualizar Estado</h6>
+                    <div class="mb-3">
+                      <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
+                      <select class="form-select" id="nuevoEstado" name="nuevoEstado" required>
+                        <option value="">Seleccionar estado...</option>
+                        <option th:each="estado : ${estados}" 
+                                th:value="${estado.toString()}" 
+                                th:text="${estado.toString()}"
+                                th:selected="${estado == orden.estado}">
+                          PENDIENTE
+                        </option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                      <i class="bi bi-check-circle me-2"></i>Actualizar Estado
+                    </button>
+                  </form>
+                </div>
+
+                <!-- Procesar reembolso -->
+                <div class="col-md-6">
+                  <div class="border rounded p-3 bg-light">
+                    <h6 class="mb-3"><i class="bi bi-arrow-counterclockwise me-2"></i>Reembolso</h6>
+                    <form th:action="@{/admin/ventas/orden/{id}/reembolsar(id=${orden.id})}" 
+                          method="post" id="reembolsoForm">
+                      <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo del Reembolso</label>
+                        <textarea class="form-control" id="motivo" name="motivo" 
+                                  rows="3" required 
+                                  placeholder="Describe el motivo del reembolso..."></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-warning w-100" 
+                              th:disabled="${orden.estado.toString() == 'REEMBOLSADA' or orden.estado.toString() == 'CANCELADA'}">
+                        <i class="bi bi-cash-coin me-2"></i>Procesar Reembolso
+                      </button>
+                      <small class="text-muted d-block mt-2">
+                        <i class="bi bi-info-circle me-1"></i>
+                        El reembolso cambiará el estado de la orden
+                      </small>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Confirmar actualización de estado
+      document.querySelector('form[action*="actualizar-estado"]')?.addEventListener('submit', function(e) {
+        const select = document.getElementById('nuevoEstado');
+        if (!select.value) {
+          e.preventDefault();
+          Swal.fire({
+            icon: 'warning',
+            title: 'Selecciona un estado',
+            text: 'Debes seleccionar un estado antes de actualizar',
+          });
+          return;
+        }
+      });
+
+      // Confirmar reembolso
+      document.getElementById('reembolsoForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        Swal.fire({
+          title: '¿Procesar reembolso?',
+          text: 'Esta acción no se puede deshacer',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ffc107',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Sí, reembolsar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.submit();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -340,7 +340,7 @@
       }
       
       const totalUsers = users.length;
-      const admins = users.filter(u => u.rol && u.rol.nombre === 'ADMIN').length;
+      const admins = users.filter(u => u.rol === 'ADMIN').length;
       const regularUsers = totalUsers - admins;
       
       document.getElementById('statsCards').innerHTML = `
@@ -485,10 +485,10 @@
                     ${user.nombre}
                   </div>
                 </td>
-                <td>${user.email}</td>
+                <td>${user.correo}</td>
                 <td>
-                  <span class="badge ${user.rol?.nombre === 'ADMIN' ? 'bg-danger' : 'bg-primary'}">
-                    ${user.rol ? user.rol.nombre : 'Sin rol'}
+                  <span class="badge ${user.rol === 'ADMIN' ? 'bg-danger' : 'bg-primary'}">
+                    ${user.rol || 'Sin rol'}
                   </span>
                 </td>
                 <td>
@@ -543,12 +543,12 @@
               <strong><i class="bi bi-person me-2"></i>Nombre:</strong> ${user.nombre}
             </div>
             <div class="mb-3">
-              <strong><i class="bi bi-envelope me-2"></i>Email:</strong> ${user.email}
+              <strong><i class="bi bi-envelope me-2"></i>Email:</strong> ${user.correo}
             </div>
             <div class="mb-3">
               <strong><i class="bi bi-shield me-2"></i>Rol:</strong> 
-              <span class="badge ${user.rol?.nombre === 'ADMIN' ? 'bg-danger' : 'bg-primary'}">
-                ${user.rol ? user.rol.nombre : 'Sin rol'}
+              <span class="badge ${user.rol === 'ADMIN' ? 'bg-danger' : 'bg-primary'}">
+                ${user.rol || 'Sin rol'}
               </span>
             </div>
           </div>
@@ -578,7 +578,7 @@
             <div class="card bg-light">
               <div class="card-body">
                 <strong>${user.nombre}</strong><br>
-                <small class="text-muted">${user.email}</small>
+                <small class="text-muted">${user.correo}</small>
               </div>
             </div>
           </div>
@@ -661,11 +661,11 @@
                       ${user.nombre.charAt(0).toUpperCase()}
                     </div>
                     <strong>${user.nombre}</strong>
-                    <span class="badge ${user.rol?.nombre === 'ADMIN' ? 'bg-danger' : 'bg-primary'} ms-2">
-                      ${user.rol ? user.rol.nombre : 'Sin rol'}
+                    <span class="badge ${user.rol === 'ADMIN' ? 'bg-danger' : 'bg-primary'} ms-2">
+                      ${user.rol || 'Sin rol'}
                     </span>
                   </div>
-                  <p class="mb-0"><strong>Email:</strong> ${user.email}</p>
+                  <p class="mb-0"><strong>Email:</strong> ${user.correo}</p>
                   <p class="mb-0"><strong>ID:</strong> ${user.id}</p>
                 </div>
               </div>
