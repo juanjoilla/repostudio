@@ -5,6 +5,7 @@ import com.artesluis.artesluis_backend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -102,6 +103,7 @@ public class UsuarioController {
 
     // Obtener perfil del usuario autenticado (requiere ID)
     @GetMapping("/perfil/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> obtenerPerfil(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         
@@ -134,6 +136,7 @@ public class UsuarioController {
 
     // Actualizar perfil del usuario
     @PutMapping("/perfil/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> actualizarPerfil(@PathVariable Long id, @RequestBody Map<String, String> datos) {
         Map<String, Object> response = new HashMap<>();
         
@@ -177,6 +180,7 @@ public class UsuarioController {
 
     // Cambiar contraseña
     @PutMapping("/cambiar-password/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> cambiarPassword(@PathVariable Long id, @RequestBody Map<String, String> passwords) {
         Map<String, Object> response = new HashMap<>();
         

@@ -3,12 +3,14 @@ package com.artesluis.artesluis_backend.controller;
 import com.artesluis.artesluis_backend.model.Rol;
 import com.artesluis.artesluis_backend.service.RolService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/roles")
+@PreAuthorize("hasRole('ADMIN')")
 public class RolController {
 
     @Autowired

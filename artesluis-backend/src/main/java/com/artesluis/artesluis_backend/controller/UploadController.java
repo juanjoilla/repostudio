@@ -2,6 +2,7 @@ package com.artesluis.artesluis_backend.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +12,7 @@ import java.nio.file.*;
 
 @RestController
 @RequestMapping("/api/upload")
+@PreAuthorize("hasAnyRole('ADMIN', 'ARTISTA')")
 public class UploadController {
 
     private static final String UPLOAD_DIR = "uploads/";

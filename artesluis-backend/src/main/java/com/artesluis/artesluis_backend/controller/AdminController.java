@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
+@PreAuthorize("hasAnyRole('ADMIN', 'MODERADOR')")
 public class AdminController {
 
     @Autowired
@@ -52,32 +54,13 @@ public class AdminController {
         }
     }
 
-    // Listar todos los usuarios - SOLO PARA ADMINISTRADORES
-    @PostMapping("/usuarios")
-    public ResponseEntity<Map<String, Object>> listarUsuarios(@RequestBody Map<String, String> adminCredentials) {
+    // Listar todos los usuarios - Spring Security valida automáticamente el rol
+    @GetMapping("/usuarios")
+    public ResponseEntity<Map<String, Object>> listarUsuarios() {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            // Verificar que quien hace la petición es administrador
-            String adminEmail = adminCredentials.get("adminEmail");
-            String adminPassword = adminCredentials.get("adminPassword");
-            
-            if (adminEmail == null || adminPassword == null) {
-                response.put("success", false);
-                response.put("message", "Credenciales de administrador requeridas");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-            
-            Usuario admin = usuarioService.obtenerPorCorreo(adminEmail);
-            
-            if (admin == null || !admin.getPassword().equals(adminPassword) || 
-                !admin.getRol().getNombre().equals("ADMIN")) {
-                response.put("success", false);
-                response.put("message", "Acceso denegado - Se requieren privilegios de administrador");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-            
-            // Si es admin, retornar lista de usuarios (sin contraseñas)
+            // Retornar lista de usuarios (sin contraseñas)
             List<Usuario> usuarios = usuarioService.listarUsuarios();
             List<Map<String, Object>> usuariosSeguros = usuarios.stream()
                 .map(u -> {

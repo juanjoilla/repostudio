@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -54,13 +55,8 @@ public class AdminPlanesController {
     // API REST para crear un nuevo plan
     @PostMapping("/api/planes")
     @ResponseBody
-    public ResponseEntity<Plan> crearPlan(@RequestBody Plan plan, HttpSession session) {
-        // Verificar que el usuario esté autenticado como admin
-        if (session.getAttribute("usuario") == null || 
-            !"ADMIN".equals(session.getAttribute("rolUsuario"))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Plan> crearPlan(@RequestBody Plan plan) {
         Plan nuevoPlan = planRepository.save(plan);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPlan);
     }
@@ -68,15 +64,9 @@ public class AdminPlanesController {
     // API REST para actualizar un plan existente
     @PutMapping("/api/planes/{id}")
     @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Plan> actualizarPlan(@PathVariable Long id, 
-                                                @RequestBody Plan planActualizado,
-                                                HttpSession session) {
-        // Verificar que el usuario esté autenticado como admin
-        if (session.getAttribute("usuario") == null || 
-            !"ADMIN".equals(session.getAttribute("rolUsuario"))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        
+                                                @RequestBody Plan planActualizado) {
         Optional<Plan> planExistente = planRepository.findById(id);
         if (planExistente.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -100,13 +90,8 @@ public class AdminPlanesController {
     // API REST para eliminar un plan
     @DeleteMapping("/api/planes/{id}")
     @ResponseBody
-    public ResponseEntity<Void> eliminarPlan(@PathVariable Long id, HttpSession session) {
-        // Verificar que el usuario esté autenticado como admin
-        if (session.getAttribute("usuario") == null || 
-            !"ADMIN".equals(session.getAttribute("rolUsuario"))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> eliminarPlan(@PathVariable Long id) {
         Optional<Plan> plan = planRepository.findById(id);
         if (plan.isEmpty()) {
             return ResponseEntity.notFound().build();

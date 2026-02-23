@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/admin/ordenes")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminOrdenesController {
 
     @Autowired
@@ -33,20 +35,13 @@ public class AdminOrdenesController {
     
     /**
      * Listar todas las órdenes con filtros y paginación
+     * Spring Security valida automáticamente que el usuario tiene rol ADMIN
      */
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> listarOrdenes(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            // Verificar credenciales de administrador
-            String adminEmail = (String) request.get("adminEmail");
-            String adminPassword = (String) request.get("adminPassword");
-            
-            if (!verificarAdministrador(adminEmail, adminPassword, response)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-            
             // Obtener parámetros de filtrado
             String numeroOrden = (String) request.get("numeroOrden");
             String estadoStr = (String) request.get("estado");
@@ -88,21 +83,13 @@ public class AdminOrdenesController {
     
     /**
      * Obtener detalle de una orden específica
+     * Spring Security valida automáticamente que el usuario tiene rol ADMIN
      */
-    @PostMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> obtenerOrden(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> credentials) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> obtenerOrden(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            String adminEmail = credentials.get("adminEmail");
-            String adminPassword = credentials.get("adminPassword");
-            
-            if (!verificarAdministrador(adminEmail, adminPassword, response)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-            
             Orden orden = ordenService.obtenerPorId(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
             
@@ -122,22 +109,16 @@ public class AdminOrdenesController {
     
     /**
      * Actualizar el estado de una orden
+     * Spring Security valida automáticamente que el usuario tiene rol ADMIN
      */
-    @PostMapping("/{id}/estado")
+    @PutMapping("/{id}/estado")
     public ResponseEntity<Map<String, Object>> actualizarEstadoOrden(
             @PathVariable Long id,
             @RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            String adminEmail = request.get("adminEmail");
-            String adminPassword = request.get("adminPassword");
             String nuevoEstadoStr = request.get("nuevoEstado");
-            
-            if (!verificarAdministrador(adminEmail, adminPassword, response)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-            
             if (nuevoEstadoStr == null || nuevoEstadoStr.trim().isEmpty()) {
                 response.put("success", false);
                 response.put("message", "Estado nuevo es requerido");
@@ -166,21 +147,15 @@ public class AdminOrdenesController {
     
     /**
      * Obtener estadísticas de ventas
+     * Spring Security valida automáticamente que el usuario tiene rol ADMIN
      */
     @PostMapping("/estadisticas")
-    public ResponseEntity<Map<String, Object>> obtenerEstadisticas(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<Map<String, Object>> obtenerEstadisticas(@RequestBody(required = false) Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            String adminEmail = (String) request.get("adminEmail");
-            String adminPassword = (String) request.get("adminPassword");
-            
-            if (!verificarAdministrador(adminEmail, adminPassword, response)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-            
             // Período (días hacia atrás desde hoy)
-            int dias = request.get("dias") != null ? (Integer) request.get("dias") : 30;
+            int dias = (request != null && request.get("dias") != null) ? (Integer) request.get("dias") : 30;
             LocalDateTime fechaFin = LocalDateTime.now();
             LocalDateTime fechaInicio = fechaFin.minusDays(dias);
             
@@ -233,20 +208,14 @@ public class AdminOrdenesController {
     
     /**
      * Obtener reporte de ventas por período
+     * Spring Security valida automáticamente que el usuario tiene rol ADMIN
      */
     @PostMapping("/reportes")
-    public ResponseEntity<Map<String, Object>> reporteVentas(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<Map<String, Object>> reporteVentas(@RequestBody(required = false) Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            String adminEmail = (String) request.get("adminEmail");
-            String adminPassword = (String) request.get("adminPassword");
-            
-            if (!verificarAdministrador(adminEmail, adminPassword, response)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-            
-            int dias = request.get("dias") != null ? (Integer) request.get("dias") : 30;
+            int dias = (request != null && request.get("dias") != null) ? (Integer) request.get("dias") : 30;
             LocalDateTime fechaFin = LocalDateTime.now();
             LocalDateTime fechaInicio = fechaFin.minusDays(dias);
             
@@ -298,25 +267,6 @@ public class AdminOrdenesController {
     }
     
     // Métodos auxiliares
-    private boolean verificarAdministrador(String email, String password, Map<String, Object> response) {
-        if (email == null || password == null) {
-            response.put("success", false);
-            response.put("message", "Credenciales de administrador requeridas");
-            return false;
-        }
-        
-        Usuario admin = usuarioService.obtenerPorCorreo(email);
-        
-        if (admin == null || !admin.getPassword().equals(password) || 
-            !admin.getRol().getNombre().equals("ADMIN")) {
-            response.put("success", false);
-            response.put("message", "Acceso denegado - Se requieren privilegios de administrador");
-            return false;
-        }
-        
-        return true;
-    }
-    
     private Map<String, Object> ordenToMap(Orden orden) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", orden.getId());
