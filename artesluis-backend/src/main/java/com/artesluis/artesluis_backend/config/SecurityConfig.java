@@ -91,7 +91,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers(HttpMethod.DELETE, "/api/data/**").hasRole("ADMIN")
                 
                 // Carrito y checkout - usuarios autenticados
-                .requestMatchers("/carrito/**", "/checkout/**", "/mis-ordenes").authenticated()
+                .requestMatchers("/carrito/**", "/checkout/**","/checkout/procesar", "/mis-ordenes").authenticated()
                 
                 // Cualquier otra petición requiere autenticación
                 .anyRequest().authenticated()
