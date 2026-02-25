@@ -44,7 +44,10 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers("/", "/index", "/login", "/logout", "/demo-login").permitAll()
                 .requestMatchers("/static/**", "/css/**", "/js/**", "/img/**", "/uploads/**").permitAll()
                 .requestMatchers("/contacto", "/nosotros", "/mision", "/portafolio").permitAll()
-                .requestMatchers("/planes").permitAll()
+                
+                // Planes - Vista pública, pero acciones de carrito requieren autenticación
+                .requestMatchers(HttpMethod.GET, "/planes").permitAll()
+                .requestMatchers("/planes/agregar-carrito", "/planes/carrito/**").authenticated()
                 
                 // === APIs PÚBLICAS (sin autenticación) ===
                 // Health checks y diagnósticos
@@ -122,7 +125,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             
             // CSRF - deshabilitado para APIs REST (considerar habilitarlo en producción)
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**")
+                .ignoringRequestMatchers("/api/**", "/planes/agregar-carrito", "/planes/carrito/**")
             );
 
         return http.build();
