@@ -30,10 +30,14 @@ public class UserSessionInterceptor implements HandlerInterceptor {
         
         // Solo procesar si es una vista (no una respuesta REST/JSON)
         if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")) {
+            String viewName = modelAndView.getViewName();
+            System.out.println("[UserSessionInterceptor] Processing view: " + viewName);
+            
             HttpSession session = request.getSession(false);
             
             if (session != null) {
                 Usuario usuario = (Usuario) session.getAttribute("usuario");
+                System.out.println("[UserSessionInterceptor] Usuario in session: " + (usuario != null ? usuario.getNombre() : "null"));
                 
                 if (usuario != null) {
                     // Agregar información del usuario a todas las vistas
@@ -41,6 +45,7 @@ public class UserSessionInterceptor implements HandlerInterceptor {
                     modelAndView.addObject("usuario", usuario);
                     modelAndView.addObject("usuarioId", usuario.getId());
                     modelAndView.addObject("rolUsuario", usuario.getRol().getNombre());
+                    System.out.println("[UserSessionInterceptor] Added usuarioLogueado=true to view");
                     
                     // Agregar información del carrito
                     try {
@@ -51,18 +56,22 @@ public class UserSessionInterceptor implements HandlerInterceptor {
                                 .sum();
                         
                         modelAndView.addObject("itemsEnCarrito", cantidadItems);
+                        System.out.println("[UserSessionInterceptor] Added itemsEnCarrito=" + cantidadItems + " to view");
                     } catch (Exception e) {
                         // Si hay error al obtener el carrito, solo loguear y continuar
                         System.err.println("Error al obtener carrito en interceptor: " + e.getMessage());
+                        e.printStackTrace();
                         modelAndView.addObject("itemsEnCarrito", 0);
                     }
                 } else {
                     // Usuario no autenticado
+                    System.out.println("[UserSessionInterceptor] No user in session, setting usuarioLogueado=false");
                     modelAndView.addObject("usuarioLogueado", false);
                     modelAndView.addObject("itemsEnCarrito", 0);
                 }
             } else {
                 // Sin sesión
+                System.out.println("[UserSessionInterceptor] No session found");
                 modelAndView.addObject("usuarioLogueado", false);
                 modelAndView.addObject("itemsEnCarrito", 0);
             }
