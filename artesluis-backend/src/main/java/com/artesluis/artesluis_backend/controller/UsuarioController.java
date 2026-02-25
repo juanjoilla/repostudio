@@ -55,6 +55,9 @@ public class UsuarioController {
                 // Establecer la autenticación en el contexto de seguridad
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 
+                // Obtener información del usuario
+                Usuario usuario = usuarioService.obtenerPorCorreo(correo);
+                
                 // Crear sesión HTTP y guardar el contexto de seguridad
                 HttpSession session = request.getSession(true);
                 session.setAttribute(
@@ -62,8 +65,10 @@ public class UsuarioController {
                     SecurityContextHolder.getContext()
                 );
                 
-                // Obtener información del usuario
-                Usuario usuario = usuarioService.obtenerPorCorreo(correo);
+                // IMPORTANTE: Guardar atributos de sesión que los controladores esperan
+                session.setAttribute("usuario", usuario);
+                session.setAttribute("usuarioId", usuario.getId());
+                session.setAttribute("rolUsuario", usuario.getRol().getNombre());
                 
                 // Login exitoso - no retornar la contraseña
                 response.put("success", true);
@@ -89,6 +94,34 @@ public class UsuarioController {
             response.put("message", "Error en el servidor: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    // Verificar estado de sesión - útil para debugging
+    @GetMapping("/session-status")
+    public ResponseEntity<Map<String, Object>> verificarSesion(HttpServletRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        
+        if (session != null) {
+            Object usuario = session.getAttribute("usuario");
+            Object usuarioId = session.getAttribute("usuarioId");
+            Object rolUsuario = session.getAttribute("rolUsuario");
+            
+            response.put("sessionExists", true);
+            response.put("sessionId", session.getId());
+            response.put("hasUsuario", usuario != null);
+            response.put("usuarioId", usuarioId);
+            response.put("rolUsuario", rolUsuario);
+            
+            // Verificar también Spring Security
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            response.put("hasSpringSecurityAuth", auth != null && auth.isAuthenticated());
+            response.put("springSecurityPrincipal", auth != null ? auth.getName() : null);
+        } else {
+            response.put("sessionExists", false);
+        }
+        
+        return ResponseEntity.ok(response);
     }
 
     // Crear nuevo usuario - REGISTRO

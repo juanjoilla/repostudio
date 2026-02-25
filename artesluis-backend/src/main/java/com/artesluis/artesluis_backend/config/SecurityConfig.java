@@ -53,6 +53,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 
                 // Autenticación y registro
                 .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
+                .requestMatchers("/api/usuarios/session-status").permitAll() // Para debugging
                 
                 // Estadísticas públicas
                 .requestMatchers("/api/data/stats").permitAll()
