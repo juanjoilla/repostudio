@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.http.HttpMethod;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,14 +50,16 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers("/api/data/stats").permitAll()
                 .requestMatchers("/health", "/api/health/**").permitAll()
                 
-                // Planes - GET es público
+                // Planes - GET es público, POST/PUT/DELETE requieren ADMIN
                 .requestMatchers("/planes").permitAll()
-                .requestMatchers("/api/planes").hasAnyRole("ADMIN", "MODERADOR", "CLIENTE", "ARTISTA")
+                .requestMatchers(HttpMethod.GET, "/api/planes", "/api/planes/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/planes/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/planes/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/planes/**").hasRole("ADMIN")
                 
                 // APIs de administración - solo ADMIN
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/planes/**").hasRole("ADMIN")
                 .requestMatchers("/api/roles/**").hasRole("ADMIN")
                 .requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN", "MODERADOR")
                 .requestMatchers("/api/upload/**").hasAnyRole("ADMIN", "ARTISTA")
