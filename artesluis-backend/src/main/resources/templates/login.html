@@ -74,31 +74,51 @@
         submitBtn.textContent = 'Iniciando...';
         messageElement.textContent = '';
         
-        // Enviar datos de login
-        fetch('/login', {
+        // Enviar datos de login (usar endpoint API que devuelve JSON)
+        fetch('/api/usuarios/login', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
           },
-          body: `correo=${encodeURIComponent(correo)}&password=${encodeURIComponent(password)}`
+          body: JSON.stringify({
+            correo: correo,
+            password: password
+          })
         })
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la autenticación');
+          }
+          return response.json();
+        })
         .then(data => {
           if (data.success) {
             messageElement.style.color = 'green';
-            messageElement.textContent = data.message;
+            messageElement.textContent = data.message || 'Inicio de sesión exitoso';
             
             // Guardar credenciales en sessionStorage para operaciones de admin
             sessionStorage.setItem('adminEmail', correo);
             sessionStorage.setItem('adminPassword', password);
             
+            // Redirigir según el rol del usuario
+            const rol = data.usuario?.rol || 'CLIENTE';
+            let redirectUrl = '/';
+            
+            if (rol === 'ADMIN' || rol === 'MODERADOR') {
+              redirectUrl = '/admin';
+            } else if (rol === 'ARTISTA') {
+              redirectUrl = '/portafolio';
+            } else {
+              redirectUrl = '/planes';
+            }
+            
             // Redirigir después de un breve delay
             setTimeout(() => {
-              window.location.href = data.redirectUrl;
+              window.location.href = redirectUrl;
             }, 1000);
           } else {
             messageElement.style.color = 'red';
-            messageElement.textContent = data.message;
+            messageElement.textContent = data.message || 'Credenciales incorrectas';
           }
         })
         .catch(error => {

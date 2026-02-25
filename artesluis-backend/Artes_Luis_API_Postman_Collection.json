@@ -1,0 +1,644 @@
+{
+	"info": {
+		"_postman_id": "artesluis-api-collection",
+		"name": "Artes Luis API - Security Testing",
+		"description": "Colección completa para probar autenticación y autorización de la API de Artes Luis",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Autenticación",
+			"item": [
+				{
+					"name": "Login Form (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login successful\", function () {",
+									"    pm.response.to.have.status(302);",
+									"});",
+									"",
+									"if (pm.cookies.has('JSESSIONID')) {",
+									"    pm.environment.set('sessionId', pm.cookies.get('JSESSIONID'));",
+									"    console.log('Session ID saved:', pm.environment.get('sessionId'));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "correo",
+									"value": "admin@artesluis.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["login"]
+						},
+						"description": "Login usando formulario HTML. Retorna 302 y establece cookie JSESSIONID."
+					}
+				},
+				{
+					"name": "Login API (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success field\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.usuario).to.have.property('rol');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"correo\": \"admin@artesluis.com\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/usuarios/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuarios", "login"]
+						},
+						"description": "Login vía API REST retornando JSON con datos del usuario."
+					}
+				},
+				{
+					"name": "Login Cliente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "correo",
+									"value": "juan.cliente@email.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "cliente123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["login"]
+						}
+					}
+				},
+				{
+					"name": "Login Artista",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "correo",
+									"value": "maria.gonzalez@email.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "artista123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["login"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Endpoints Públicos",
+			"item": [
+				{
+					"name": "Listar Planes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/planes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "planes"]
+						},
+						"description": "Endpoint público - No requiere autenticación"
+					}
+				},
+				{
+					"name": "Registro de Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Usuario Test\",\n  \"correo\": \"test@ejemplo.com\",\n  \"password\": \"password123\",\n  \"rol\": {\n    \"id\": 2\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/usuarios/registro",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuarios", "registro"]
+						}
+					}
+				},
+				{
+					"name": "Estadísticas Públicas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/data/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "data", "stats"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Perfil de Usuario (Autenticado)",
+			"item": [
+				{
+					"name": "Obtener Mi Perfil",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/usuarios/perfil/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuarios", "perfil", "1"]
+						},
+						"description": "Requiere estar autenticado. Cambia el ID según tu usuario."
+					}
+				},
+				{
+					"name": "Actualizar Perfil",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Nombre Actualizado\",\n  \"imagenUrl\": \"https://example.com/imagen.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/usuarios/perfil/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuarios", "perfil", "1"]
+						}
+					}
+				},
+				{
+					"name": "Cambiar Contraseña",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"passwordActual\": \"admin123\",\n  \"passwordNueva\": \"nuevaPassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/usuarios/cambiar-password/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "usuarios", "cambiar-password", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Admin - Gestión de Planes",
+			"item": [
+				{
+					"name": "Crear Plan (Solo ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Plan Test\",\n  \"precio\": 250.00,\n  \"descripcion\": \"Plan de prueba creado desde Postman\",\n  \"numeroRevisiones\": 3,\n  \"archivosIncluidos\": \"PSD, PNG\",\n  \"caracteristicas\": \"- Característica 1\\n- Característica 2\",\n  \"esRecomendado\": false,\n  \"estaActivo\": true,\n  \"colorBadge\": \"#007bff\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/planes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "planes"]
+						},
+						"description": "Solo ADMIN puede crear planes. Debe estar logueado como admin primero."
+					}
+				},
+				{
+					"name": "Actualizar Plan (Solo ADMIN)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Plan Test Actualizado\",\n  \"precio\": 300.00,\n  \"descripcion\": \"Plan actualizado\",\n  \"numeroRevisiones\": 4,\n  \"archivosIncluidos\": \"PSD, PNG, AI\",\n  \"caracteristicas\": \"- Nueva característica\",\n  \"esRecomendado\": true,\n  \"estaActivo\": true,\n  \"colorBadge\": \"#28a745\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/planes/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "planes", "1"]
+						}
+					}
+				},
+				{
+					"name": "Eliminar Plan (Solo ADMIN)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/planes/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "planes", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Admin - Gestión de Usuarios",
+			"item": [
+				{
+					"name": "Listar Usuarios (ADMIN/MODERADOR)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/usuarios",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "usuarios"]
+						},
+						"description": "Solo ADMIN o MODERADOR pueden ver la lista de usuarios"
+					}
+				},
+				{
+					"name": "Usuarios Auto (ADMIN/MODERADOR)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/usuarios/auto",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "usuarios", "auto"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Admin - Gestión de Órdenes",
+			"item": [
+				{
+					"name": "Listar Órdenes (Solo ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"numeroOrden\": \"\",\n  \"estado\": \"\",\n  \"emailCliente\": \"\",\n  \"page\": 0,\n  \"size\": 20\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/ordenes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "ordenes"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Orden (Solo ADMIN)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/ordenes/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "ordenes", "1"]
+						}
+					}
+				},
+				{
+					"name": "Actualizar Estado Orden (Solo ADMIN)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nuevoEstado\": \"COMPLETADO\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/ordenes/1/estado",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "ordenes", "1", "estado"]
+						}
+					}
+				},
+				{
+					"name": "Estadísticas de Ventas (Solo ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dias\": 30\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/ordenes/estadisticas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "ordenes", "estadisticas"]
+						}
+					}
+				},
+				{
+					"name": "Reporte de Ventas (Solo ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dias\": 30\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/ordenes/reportes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "ordenes", "reportes"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Admin - Gestión de Roles",
+			"item": [
+				{
+					"name": "Listar Roles (Solo ADMIN)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/roles",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "roles"]
+						}
+					}
+				},
+				{
+					"name": "Obtener Rol (Solo ADMIN)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/roles/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "roles", "1"]
+						}
+					}
+				},
+				{
+					"name": "Crear Rol (Solo ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"EDITOR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/roles",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "roles"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "8. Upload (ADMIN/ARTISTA)",
+			"item": [
+				{
+					"name": "Subir Imagen",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/upload/imagen",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "upload", "imagen"]
+						},
+						"description": "Solo ADMIN o ARTISTA pueden subir archivos"
+					}
+				}
+			]
+		},
+		{
+			"name": "9. Tests de Autorización",
+			"item": [
+				{
+					"name": "FAIL - Acceso sin autenticación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should fail with 401 or redirect\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([401, 302]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/usuarios",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "usuarios"]
+						},
+						"description": "Este request debe fallar - no hay sesión activa"
+					}
+				},
+				{
+					"name": "FAIL - Cliente intenta crear plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should fail with 403 Forbidden\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Plan No Autorizado\",\n  \"precio\": 100.00\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/planes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "planes"]
+						},
+						"description": "Debe fallar si estás logueado como CLIENTE"
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Pre-request script global",
+					"console.log('Making request to:', pm.request.url.toString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Test script global",
+					"console.log('Response status:', pm.response.code);",
+					"console.log('Response time:', pm.response.responseTime + 'ms');"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

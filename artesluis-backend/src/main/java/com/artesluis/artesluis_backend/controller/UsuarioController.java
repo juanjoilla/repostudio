@@ -6,8 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,10 +24,15 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-    // Endpoint de autenticación - LOGIN
+    // Endpoint de autenticación - LOGIN (con creación de sesión Spring Security)
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> autenticar(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, Object>> autenticar(
+            @RequestBody Map<String, String> credentials,
+            HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -33,26 +45,44 @@ public class UsuarioController {
                 return ResponseEntity.badRequest().body(response);
             }
             
-            Usuario usuario = usuarioService.obtenerPorCorreo(correo);
-            
-            if (usuario == null || !usuario.getPassword().equals(password)) {
+            // Autenticar usando Spring Security AuthenticationManager
+            try {
+                UsernamePasswordAuthenticationToken authToken = 
+                    new UsernamePasswordAuthenticationToken(correo, password);
+                
+                Authentication authentication = authenticationManager.authenticate(authToken);
+                
+                // Establecer la autenticación en el contexto de seguridad
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                
+                // Crear sesión HTTP y guardar el contexto de seguridad
+                HttpSession session = request.getSession(true);
+                session.setAttribute(
+                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    SecurityContextHolder.getContext()
+                );
+                
+                // Obtener información del usuario
+                Usuario usuario = usuarioService.obtenerPorCorreo(correo);
+                
+                // Login exitoso - no retornar la contraseña
+                response.put("success", true);
+                response.put("message", "Autenticación exitosa");
+                Map<String, Object> usuarioMap = new HashMap<>();
+                usuarioMap.put("id", usuario.getId());
+                usuarioMap.put("nombre", usuario.getNombre());
+                usuarioMap.put("correo", usuario.getCorreo());
+                usuarioMap.put("imagenUrl", usuario.getImagenUrl());
+                usuarioMap.put("rol", usuario.getRol().getNombre());
+                response.put("usuario", usuarioMap);
+                
+                return ResponseEntity.ok(response);
+                
+            } catch (org.springframework.security.core.AuthenticationException e) {
                 response.put("success", false);
                 response.put("message", "Credenciales inválidas");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
-            
-            // Login exitoso - no retornar la contraseña
-            response.put("success", true);
-            response.put("message", "Autenticación exitosa");
-            Map<String, Object> usuarioMap = new HashMap<>();
-            usuarioMap.put("id", usuario.getId());
-            usuarioMap.put("nombre", usuario.getNombre());
-            usuarioMap.put("correo", usuario.getCorreo());
-            usuarioMap.put("imagenUrl", usuario.getImagenUrl());
-            usuarioMap.put("rol", usuario.getRol().getNombre());
-            response.put("usuario", usuarioMap);
-            
-            return ResponseEntity.ok(response);
             
         } catch (Exception e) {
             response.put("success", false);
