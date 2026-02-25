@@ -125,7 +125,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             
             // CSRF - deshabilitado para APIs REST (considerar habilitarlo en producción)
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**", "/planes/agregar-carrito", "/planes/carrito/**")
+                .ignoringRequestMatchers("/api/**", "/planes/agregar-carrito", "/planes/carrito/**", "/checkout/**")
             );
 
         return http.build();
