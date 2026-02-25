@@ -40,36 +40,54 @@ public class SecurityConfig implements WebMvcConfigurer {
         http
             // Configuración de autorización
             .authorizeHttpRequests(auth -> auth
-                // Recursos públicos
+                // Recursos públicos - HTML
                 .requestMatchers("/", "/index", "/login", "/logout", "/demo-login").permitAll()
                 .requestMatchers("/static/**", "/css/**", "/js/**", "/img/**", "/uploads/**").permitAll()
                 .requestMatchers("/contacto", "/nosotros", "/mision", "/portafolio").permitAll()
-                
-                // APIs públicas
-                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
-                .requestMatchers("/api/data/stats").permitAll()
-                .requestMatchers("/health", "/api/health/**").permitAll()
-                
-                // Planes - GET es público, POST/PUT/DELETE requieren ADMIN
                 .requestMatchers("/planes").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/planes", "/api/planes/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/planes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/planes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/planes/**").hasRole("ADMIN")
                 
-                // APIs de administración - solo ADMIN
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/roles/**").hasRole("ADMIN")
+                // === APIs PÚBLICAS (sin autenticación) ===
+                // Health checks y diagnósticos
+                .requestMatchers("/health", "/api/health/**", "/api/test").permitAll()
+                .requestMatchers("/diagnostics/**").permitAll()
+                
+                // Autenticación y registro
+                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
+                
+                // Estadísticas públicas
+                .requestMatchers("/api/data/stats").permitAll()
+                
+                // Planes - GET es público (para que clientes vean los planes sin login)
+                .requestMatchers(HttpMethod.GET, "/api/planes", "/api/planes/*").permitAll()
+                
+                // === APIs PROTEGIDAS - Requieren autenticación ===
+                // Planes - Solo ADMIN puede crear/editar/eliminar
+                .requestMatchers(HttpMethod.POST, "/api/planes", "/api/planes/*").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/planes/*").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/planes/*").hasRole("ADMIN")
+                
+                // Perfil de usuario - requiere autenticación (cualquier usuario logueado)
+                .requestMatchers("/api/usuarios/perfil/**", "/api/usuarios/cambiar-password/**").authenticated()
+                
+                // Gestión de usuarios - ADMIN y MODERADOR
                 .requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN", "MODERADOR")
+                
+                // Roles - solo ADMIN
+                .requestMatchers("/api/roles/**").hasRole("ADMIN")
+                
+                // Upload - ADMIN y ARTISTA
                 .requestMatchers("/api/upload/**").hasAnyRole("ADMIN", "ARTISTA")
                 
-                // Carrito y checkout - usuarios autenticados
-                .requestMatchers("/carrito/**", "/checkout/**").authenticated()
-                .requestMatchers("/mis-ordenes").authenticated()
+                // Administración - solo ADMIN
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 
-                // Diagnósticos - según entorno
-                .requestMatchers("/diagnostics/**").permitAll()
+                // Data - POST/DELETE solo ADMIN, GET puede ser público o según endpoint
+                .requestMatchers(HttpMethod.POST, "/api/data/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/data/**").hasRole("ADMIN")
+                
+                // Carrito y checkout - usuarios autenticados
+                .requestMatchers("/carrito/**", "/checkout/**", "/mis-ordenes").authenticated()
                 
                 // Cualquier otra petición requiere autenticación
                 .anyRequest().authenticated()
